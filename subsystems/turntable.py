@@ -44,7 +44,13 @@ class Turntable(commands2.PIDSubsystem):
 		turn_request = controls.VelocityVoltage(speed).with_slot(0)
 		self.motor.set_control(turn_request)
 
-	# TODO: Turn for N degrees, turn to N degrees
+	def turndeg(self, distance: units.degree) -> None: # TODO: fix
+		turn_request = controls.PositionVoltage(distance/360+self.motor.get_position()._value).with_slot(0) # TODO: sucks
+		self.motor.set_control(turn_request)
+
+	def turnto(self, position: units.degree) -> None: # TODO: fix
+		turn_request = controls.PositionVoltage(position/360).with_slot(0)
+		self.motor.set_control(turn_request)
 
 	def periodic(self) -> None:
 		super().periodic()

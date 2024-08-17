@@ -29,6 +29,7 @@ class RobotContainer:
         # The robot's subsystems
         self.robotDrive = subsystems.drive.drivetrain.Drivetrain(isReal=isReal)
         self.turntable = turntable.Turntable()
+        # TODO: state-machine subsystem
 
         # The driver's controller
         self.driverController = commands2.button.CommandXboxController(constants.kDriverControllerPort)
@@ -62,6 +63,8 @@ class RobotContainer:
 
         self.driverController.a().onTrue(cmd.runOnce(lambda: self.turntable.freespin(2), self.turntable)).onFalse(cmd.runOnce(lambda: self.turntable.freespin(0), self.turntable))
         self.driverController.b().onTrue(cmd.runOnce(lambda: self.turntable.freespin(-2), self.turntable)).onFalse(cmd.runOnce(lambda: self.turntable.freespin(0), self.turntable))
+        self.driverController.x().onTrue(cmd.runOnce(lambda: self.turntable.turndeg(90), self.turntable))
+        self.driverController.y().onTrue(cmd.runOnce(lambda: self.turntable.turnto(0), self.turntable))
 
     def getAutonomousCommand(self) -> commands2.Command:
         """
@@ -70,3 +73,4 @@ class RobotContainer:
         :returns: the command to run in autonomous
         """
         return commands2.InstantCommand()
+        # TODO: auton
