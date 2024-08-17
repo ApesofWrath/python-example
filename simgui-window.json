@@ -25,7 +25,7 @@
   "Window": {
     "###/SmartDashboard/Field": {
       "Collapsed": "0",
-      "Pos": "239,50",
+      "Pos": "1083,518",
       "Size": "723,537"
     },
     "###/SmartDashboard/odo_raw": {
@@ -40,27 +40,27 @@
     },
     "###Joysticks": {
       "Collapsed": "0",
-      "Pos": "316,594",
+      "Pos": "44,805",
       "Size": "796,189"
     },
     "###Keyboard 0 Settings": {
       "Collapsed": "0",
-      "Pos": "10,50",
+      "Pos": "271,66",
       "Size": "300,560"
     },
     "###NetworkTables": {
       "Collapsed": "0",
-      "Pos": "979,33",
-      "Size": "750,185"
+      "Pos": "1151,31",
+      "Size": "750,341"
     },
     "###NetworkTables Info": {
       "Collapsed": "0",
-      "Pos": "60,606",
+      "Pos": "250,652",
       "Size": "750,144"
     },
     "###Other Devices": {
       "Collapsed": "0",
-      "Pos": "1468,290",
+      "Pos": "1654,368",
       "Size": "250,695"
     },
     "###Plot <0>": {
@@ -70,7 +70,7 @@
     },
     "###RoboRIO": {
       "Collapsed": "0",
-      "Pos": "142,5",
+      "Pos": "127,22",
       "Size": "119,146"
     },
     "###System Joysticks": {
@@ -80,7 +80,7 @@
     },
     "###Timing": {
       "Collapsed": "0",
-      "Pos": "5,150",
+      "Pos": "8,186",
       "Size": "135,127"
     },
     "Debug##Default": {
