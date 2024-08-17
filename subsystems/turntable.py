@@ -4,8 +4,9 @@
 # the WPILib BSD license file in the root directory of this project.
 #
 
-# standard python imports
+# standard imports
 import math
+from constants import Turntable as constants
 
 # wpi imports
 import wpilib
@@ -20,22 +21,16 @@ from phoenix6.hardware.talon_fx import TalonFX
 from phoenix6.hardware.cancoder import CANcoder
 from phoenix6 import configs, signals, controls
 
-driveMotorId = 13 # should be unallocated
-motorPID = {"p":.01,"i":0,"d":0,"v":.12}
-
 class ShooterSubsystem(commands2.PIDSubsystem):
 	def __init__(self) -> None:
-		self.motor = TalonFX(driveMotorId)
+		self.motor = TalonFX(constants.driveMotorId)
 
 		motor_cfg = configs.TalonFXConfiguration()
 		slot0Config = motor_cfg.slot0
-		slot0Config.k_p = motorPID["p"]
-		slot0Config.k_i = motorPID["i"]
-		slot0Config.k_d = motorPID["d"]
-		slot0Config.k_v = motorPID["v"]
+		slot0Config.k_p = constants.motorPID["p"]
+		slot0Config.k_i = constants.motorPID["i"]
+		slot0Config.k_d = constants.motorPID["d"]
+		slot0Config.k_v = constants.motorPID["v"]
 		self.motor.configurator.apply(motor_cfg)
 
-		# encoder: is it integrated
-		# how else does the motor need to be configured
-	
 	# commands for spin in each direction

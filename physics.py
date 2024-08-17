@@ -4,7 +4,7 @@ import typing
 
 # project imports
 from robot import MyRobot
-import subsystems.drive.constants
+from constants import Drive as constants
 from utils.units import unit
 
 # wpi imports
@@ -34,8 +34,8 @@ class PhysicsEngine:
         self.robot = robot
         self.drivetrain = robot.container.robotDrive
 
-        self.drive_ratio = subsystems.drive.constants.kDriveRatio
-        self.turn_ratio = subsystems.drive.constants.kTurnRatio
+        self.drive_ratio = constants.kDriveRatio
+        self.turn_ratio = constants.kTurnRatio
 
         backLeftTurn = sim.DCMotorSim(DCMotor.krakenX60(1), self.turn_ratio, 0.01)
         backLeftTurn.setState(0,0)

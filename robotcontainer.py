@@ -8,7 +8,7 @@
 
 # project imports
 import subsystems.drive.drivetrain
-import constants
+from constants import Global as constants
 
 # wpi imports
 import wpilib

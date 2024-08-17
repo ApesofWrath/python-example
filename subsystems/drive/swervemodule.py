@@ -8,7 +8,7 @@
 import math
 
 # project imports
-import subsystems.drive.constants as constants
+from constants import Drive as constants
 from utils.units import unit
 
 # wpi imports
