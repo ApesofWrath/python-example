@@ -4,20 +4,16 @@
 # the WPILib BSD license file in the root directory of this project.
 #
 
-# standard python imports
-
 # project imports
 import subsystems.drive.drivetrain
 from constants import Global as constants
+from subsystems import turntable
 
 # wpi imports
 import wpilib
 import wpimath
 import commands2
-import commands2.cmd
-import commands2.button
-
-# vendor imports
+import commands2.cmd as cmd
 
 class RobotContainer:
     """
@@ -32,11 +28,10 @@ class RobotContainer:
         """The container for the robot. Contains subsystems, OI devices, and commands."""
         # The robot's subsystems
         self.robotDrive = subsystems.drive.drivetrain.Drivetrain(isReal=isReal)
+        self.turntable = turntable.Turntable()
 
         # The driver's controller
-        self.driverController = wpilib.XboxController(
-            constants.kDriverControllerPort
-        )
+        self.driverController = commands2.button.CommandXboxController(constants.kDriverControllerPort)
 
         # Configure the button bindings
         self.configureButtonBindings()
@@ -64,6 +59,9 @@ class RobotContainer:
         factories on commands2.button.CommandGenericHID or one of its
         subclasses (commands2.button.CommandJoystick or command2.button.CommandXboxController).
         """
+
+        self.driverController.a().onTrue(cmd.runOnce(lambda: self.turntable.freespin(2), self.turntable)).onFalse(cmd.runOnce(lambda: self.turntable.freespin(0), self.turntable))
+        self.driverController.b().onTrue(cmd.runOnce(lambda: self.turntable.freespin(-2), self.turntable)).onFalse(cmd.runOnce(lambda: self.turntable.freespin(0), self.turntable))
 
     def getAutonomousCommand(self) -> commands2.Command:
         """
