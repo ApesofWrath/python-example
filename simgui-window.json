@@ -1,7 +1,7 @@
 {
   "Docking": {
     "Data": [
-      "DockNode          ID=0x0000000F Pos=-1,20 Size=1919,1059 Split=Y",
+      "DockNode          ID=0x0000000F Pos=0,18 Size=1919,1062 Split=Y",
       "DockNode        ID=0x00000012 Parent=0x0000000F SizeRef=1386,578 Split=Y",
       "DockNode      ID=0x00000011 Parent=0x00000012 SizeRef=1386,547 Split=X",
       "DockNode    ID=0x00000009 Parent=0x00000011 SizeRef=625,584 Split=Y Selected=0x2D9B9756",
@@ -47,20 +47,20 @@
     "###/SmartDashboard/odo_raw": {
       "Collapsed": "0",
       "DockId": "0x00000010,0",
-      "Pos": "867,20",
-      "Size": "1051,547"
+      "Pos": "868,18",
+      "Size": "1051,549"
     },
     "###FMS": {
       "Collapsed": "0",
       "DockId": "0x0000000E,0",
-      "Pos": "806,816",
+      "Pos": "807,817",
       "Size": "1112,263"
     },
     "###Joysticks": {
       "Collapsed": "0",
       "DockId": "0x00000005,0",
-      "Pos": "781,569",
-      "Size": "1137,245"
+      "Pos": "782,569",
+      "Size": "1137,246"
     },
     "###Keyboard 0 Settings": {
       "Collapsed": "0",
@@ -70,20 +70,20 @@
     "###NetworkTables": {
       "Collapsed": "0",
       "DockId": "0x00000007,0",
-      "Pos": "-1,20",
-      "Size": "866,283"
+      "Pos": "0,18",
+      "Size": "866,284"
     },
     "###NetworkTables Info": {
       "Collapsed": "0",
       "DockId": "0x00000007,1",
-      "Pos": "-1,20",
-      "Size": "866,283"
+      "Pos": "0,18",
+      "Size": "866,284"
     },
     "###Other Devices": {
       "Collapsed": "0",
       "DockId": "0x00000008,1",
-      "Pos": "-1,305",
-      "Size": "866,262"
+      "Pos": "0,304",
+      "Size": "866,263"
     },
     "###Plot <0>": {
       "Collapsed": "0",
@@ -93,20 +93,20 @@
     "###RoboRIO": {
       "Collapsed": "0",
       "DockId": "0x0000000D,0",
-      "Pos": "-1,816",
+      "Pos": "0,817",
       "Size": "805,263"
     },
     "###System Joysticks": {
       "Collapsed": "0",
       "DockId": "0x00000008,0",
-      "Pos": "-1,305",
-      "Size": "866,262"
+      "Pos": "0,304",
+      "Size": "866,263"
     },
     "###Timing": {
       "Collapsed": "0",
       "DockId": "0x00000003,0",
-      "Pos": "375,569",
-      "Size": "404,245"
+      "Pos": "376,569",
+      "Size": "404,246"
     },
     "Debug##Default": {
       "Collapsed": "0",
@@ -116,8 +116,8 @@
     "Robot State": {
       "Collapsed": "0",
       "DockId": "0x00000002,0",
-      "Pos": "-1,569",
-      "Size": "374,245"
+      "Pos": "0,569",
+      "Size": "374,246"
     }
   }
 }

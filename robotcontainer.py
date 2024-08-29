@@ -8,6 +8,7 @@
 import subsystems.drive.drivetrain
 from constants import Global as constants
 from subsystems import turntable
+from subsystems import spinner
 
 # wpi imports
 import wpilib
@@ -29,7 +30,7 @@ class RobotContainer:
         # The robot's subsystems
         self.robotDrive = subsystems.drive.drivetrain.Drivetrain(isReal=isReal)
         self.turntable = turntable.Turntable()
-        # TODO: state-machine subsystem
+        self.spinner = spinner.Spinner()
 
         # The driver's controller
         self.driverController = commands2.button.CommandXboxController(constants.kDriverControllerPort)
@@ -65,6 +66,9 @@ class RobotContainer:
         self.driverController.b().onTrue(cmd.runOnce(lambda: self.turntable.freespin(-2), self.turntable)).onFalse(cmd.runOnce(lambda: self.turntable.freespin(0), self.turntable))
         self.driverController.x().onTrue(cmd.runOnce(lambda: self.turntable.turndeg(90), self.turntable))
         self.driverController.y().onTrue(cmd.runOnce(lambda: self.turntable.turnto(0), self.turntable))
+        # TODO: how to press bumpers on keyboard?
+        self.driverController.leftBumper().onTrue(cmd.runOnce(self.spinner.slow))
+        self.driverController.rightBumper().onTrue(cmd.runOnce(self.spinner.fast))
 
     def getAutonomousCommand(self) -> commands2.Command:
         """

@@ -55,3 +55,7 @@ class Drive:
 class Turntable:
 	driveMotorId = 13
 	motorPID = {"p":.01,"i":0,"d":0,"v":.12}
+
+class Spinner:
+	driveMotorId = 14
+	motorPID = {"p":.01,"i":0,"d":0,"v":.12}

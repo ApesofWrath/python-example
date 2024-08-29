@@ -68,7 +68,7 @@ class PhysicsEngine:
 		self.drivetrain.frontRight.turningEncoder.sim_state.orientation = ChassisReference.CounterClockwise_Positive
 
 		# GENERIC MOTOR INIT
-		self.generic_motors = [robot.container.turntable.motor.sim_state]
+		self.generic_motors = [robot.container.turntable.motor.sim_state, robot.container.spinner.motor.sim_state]
 		for i in range(len(self.generic_motors)): self.generic_motors[i] = [self.generic_motors[i],sim.DCMotorSim(DCMotor.krakenX60(1), self.drive_ratio, 0.01)]
 
 	def update_sim(self, now: float, tm_diff: float) -> None:
