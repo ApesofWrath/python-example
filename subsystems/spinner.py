@@ -1,9 +1,3 @@
-#
-# Copyright (c) FIRST and other WPILib contributors.
-# Open Source Software; you can modify and/or share it under the terms of
-# the WPILib BSD license file in the root directory of this project.
-#
-
 # standard imports
 import math
 from constants import Spinner as constants
@@ -45,10 +39,10 @@ class Spinner(commands2.PIDSubsystem):
 		self.state = self.states.SLOW
 
 	def slow(self) -> None:
-		self.state = self.state = self.states.SLOW
+		self.state = self.states.SLOW
 
 	def fast(self) -> None:
-		self.state = self.state = self.states.FAST
+		self.state = self.states.FAST
 
 	def periodic(self) -> None:
 		super().periodic()
