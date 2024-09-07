@@ -1,6 +1,7 @@
 # standard python imports
 import math
 import random
+from pint import Quantity as Quantity
 
 # project imports
 from subsystems.drive.swervemodule import SwerveModule
@@ -23,7 +24,7 @@ class Drivetrain(commands2.Subsystem):
     Represents a swerve drive style drivetrain.
     """
 
-    def __init__(self, isReal=True) -> None:
+    def __init__(self, isReal:bool = True) -> None:
 
         self._isReal = isReal
         self._simPose = Pose2d()
@@ -87,25 +88,9 @@ class Drivetrain(commands2.Subsystem):
         :param periodSeconds: Time
         """
 
-        # swerveModuleStates = self.kinematics.toSwerveModuleStates(
-        #     wpimath.kinematics.ChassisSpeeds.discretize(
-        #         (
-        #             wpimath.kinematics.ChassisSpeeds.fromFieldRelativeSpeeds(
-        #                 xSpeed.m_as("meter / second"), ySpeed.m_as("meter / second"), rot.m_as("radian / second"), self.getPigeonRotation2d()
-        #             )
-        #             if fieldRelative
-        #             else wpimath.kinematics.ChassisSpeeds(xSpeed, ySpeed, rot)
-        #         ),
-        #         periodSeconds,
-        #     )
-        # )
-        # wpimath.kinematics.SwerveDrive4Kinematics.desaturateWheelSpeeds(
-        #     swerveModuleStates, constants.kMaxSpeed.m_as("meter / second")
-        # )
-
         swerveModuleStates = self.kinematics.toSwerveModuleStates(
             wpimath.kinematics.ChassisSpeeds.fromFieldRelativeSpeeds(
-                    xSpeed.m_as("meter / second"), ySpeed.m_as("meter / second"), rot.m_as("radian / second"), self.getPigeonRotation2d()
+                    xSpeed.m_as("meter / second"), ySpeed.m_as("meter / second"), rot.m_as("radian / second"), self.getPigeonRotation2d() # type: ignore
                 )
         )
 

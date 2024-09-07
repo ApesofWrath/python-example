@@ -34,7 +34,7 @@ class Spinner(commands2.PIDSubsystem):
 		slot0Config.k_v = constants.motorPID["v"]
 		self.motor.configurator.apply(motor_cfg)
 
-		self.states = Enum("States", ["SLOW","FAST"])
+		self.states = Enum("States", ["SLOW","FAST"]) # type: ignore
 		self.state = self.states.SLOW
 
 	def slow(self) -> None:

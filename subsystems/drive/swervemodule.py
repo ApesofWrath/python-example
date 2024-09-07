@@ -1,5 +1,6 @@
 # standard python imports
 import math
+import pint
 
 # project imports
 from constants import Drive as constants
@@ -23,7 +24,7 @@ class SwerveModule:
         driveMotorId: int,
         turningMotorId: int,
         turningEncoderId: int,
-        offset
+        offset: pint.Quantity
     ) -> None:
         """Constructs a SwerveModule with a drive motor, turning motor, drive encoder and turning encoder.
 
@@ -97,7 +98,7 @@ class SwerveModule:
         """
         return self.position
     
-    def update(self):
+    def update(self) -> None:
         self.position = wpimath.kinematics.SwerveModulePosition(
             (self.driveMotor.get_position().refresh().value * unit.turn * constants.kWheelCircumference).m_as("meter"),
             wpimath.geometry.Rotation2d((self.turningMotor.get_position().refresh().value * unit.turn).m_as("radian")),

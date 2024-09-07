@@ -1,6 +1,7 @@
 # project imports
 import subsystems.drive.drivetrain
-from constants import Global as constants
+import constants
+from constants import unit
 from subsystems import turntable
 from subsystems import spinner
 
@@ -19,7 +20,7 @@ class RobotContainer:
 
     """
 
-    def __init__(self, isReal=True):
+    def __init__(self, isReal:bool = True) -> None:
         """The container for the robot. Contains subsystems, OI devices, and commands."""
         # The robot's subsystems
         self.robotDrive = subsystems.drive.drivetrain.Drivetrain(isReal=isReal)
@@ -27,7 +28,7 @@ class RobotContainer:
         self.spinner = spinner.Spinner()
 
         # The driver's controller
-        self.driverController = commands2.button.CommandXboxController(constants.kDriverControllerPort)
+        self.driverController = commands2.button.CommandXboxController(constants.Global.kDriverControllerPort)
 
         # Configure the button bindings
         self.configureButtonBindings()
@@ -39,9 +40,9 @@ class RobotContainer:
             # hand, and turning controlled by the right.
             commands2.RunCommand(
                 lambda: self.robotDrive.drive(
-                    xSpeed = -wpimath.applyDeadband(self.driverController.getRawAxis(1), 0.1) * subsystems.drive.drivetrain.constants.kMaxSpeed,
-                    ySpeed = -wpimath.applyDeadband(self.driverController.getRawAxis(0), 0.1) * subsystems.drive.drivetrain.constants.kMaxSpeed,
-                    rot = -wpimath.applyDeadband(self.driverController.getRawAxis(4), 0.1) * subsystems.drive.drivetrain.constants.kMaxAngularSpeed,
+                    xSpeed = -wpimath.applyDeadband(self.driverController.getRawAxis(1), 0.1) * constants.Drive.kMaxSpeed,
+                    ySpeed = -wpimath.applyDeadband(self.driverController.getRawAxis(0), 0.1) * constants.Drive.kMaxSpeed,
+                    rot = -wpimath.applyDeadband(self.driverController.getRawAxis(4), 0.1) * constants.Drive.kMaxAngularSpeed,
                     fieldRelative = True,
                     periodSeconds = commands2.TimedCommandRobot.kDefaultPeriod
                 ),
@@ -49,7 +50,7 @@ class RobotContainer:
             )
         )
 
-    def configureButtonBindings(self):
+    def configureButtonBindings(self) -> None:
         """
         Use this method to define your button->command mappings. Buttons can be created via the button
         factories on commands2.button.CommandGenericHID or one of its
