@@ -1,7 +1,6 @@
 # standard imports
 import math
 from constants import Turntable as constants
-from utils.units import unit
 
 # wpi imports
 import wpilib

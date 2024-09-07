@@ -1,7 +1,6 @@
 # standard imports
 import math
 from constants import Spinner as constants
-from utils.units import unit
 from enum import Enum
 
 # wpi imports
@@ -13,7 +12,7 @@ from wpilib import SmartDashboard
 # vendor imports
 from phoenix6.hardware.talon_fx import TalonFX
 from phoenix6.hardware.cancoder import CANcoder
-from phoenix6 import configs, signals, controls, units
+from phoenix6 import configs, signals, controls
 
 class Spinner(commands2.PIDSubsystem):
 	def __init__(self) -> None:

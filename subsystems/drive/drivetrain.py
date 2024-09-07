@@ -5,7 +5,6 @@ import random
 # project imports
 from subsystems.drive.swervemodule import SwerveModule
 from constants import Drive as constants
-from utils.units import unit
 
 # wpi imports
 from wpilib import SmartDashboard, Field2d, TimedRobot

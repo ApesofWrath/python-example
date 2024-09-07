@@ -1,5 +1,7 @@
 import math
-from utils.units import unit
+from pint import UnitRegistry
+
+unit = UnitRegistry()
 
 class Global:
 	kDriverControllerPort = 0

@@ -5,7 +5,7 @@ import typing
 # project imports
 from robot import MyRobot
 from constants import Drive as constants
-from utils.units import unit
+from constants import unit as unit
 
 # wpi imports
 from wpilib import DriverStation, RobotController, SmartDashboard

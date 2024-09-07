@@ -3,7 +3,7 @@ import math
 
 # project imports
 from constants import Drive as constants
-from utils.units import unit
+from constants import unit as unit
 
 # wpi imports
 import wpilib
