@@ -1,12 +1,10 @@
 # project imports
 import subsystems.drive.drivetrain
 import constants
-from constants import unit
 from subsystems import turntable
 from subsystems import spinner
 
 # wpi imports
-import wpilib
 import wpimath
 import commands2
 import commands2.cmd as cmd

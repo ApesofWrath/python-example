@@ -5,11 +5,8 @@ import typing
 import robotcontainer
 
 # wpi imports
-import wpilib
 import commands2
 import commands2.cmd
-
-# vendor imports
 
 class MyRobot(commands2.TimedCommandRobot):
 	"""
@@ -24,8 +21,8 @@ class MyRobot(commands2.TimedCommandRobot):
 		"""
 		self.autonomousCommand: typing.Optional[commands2.Command] = None
 
-		# Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-		# autonomous chooser on the dashboard.
+		# Instantiate our RobotContainer. This will perform all our button bindings,
+		# and put our autonomous chooser on the dashboard.
 		self.container = robotcontainer.RobotContainer(isReal = self.isReal())
 
 	def disabledInit(self) -> None:
@@ -48,10 +45,9 @@ class MyRobot(commands2.TimedCommandRobot):
 		"""This function is called periodically during autonomous"""
 
 	def teleopInit(self) -> None:
-		# This makes sure that the autonomous stops running when
-		# teleop starts running. If you want the autonomous to
-		# continue until interrupted by another command, remove
-		# this line or comment it out.
+		# This makes sure that the autonomous stops running when teleop starts
+		# running. If you want the autonomous to continue until interrupted by
+		# another command, remove this line or comment it out.
 		if self.autonomousCommand is not None:
 			self.autonomousCommand.cancel()
 

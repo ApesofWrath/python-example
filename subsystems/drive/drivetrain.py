@@ -1,5 +1,4 @@
 # standard python imports
-import math
 import random
 from pint import Quantity as Quantity
 
@@ -8,7 +7,7 @@ from subsystems.drive.swervemodule import SwerveModule
 from constants import Drive as constants
 
 # wpi imports
-from wpilib import SmartDashboard, Field2d, TimedRobot
+from wpilib import SmartDashboard, Field2d
 import wpimath.geometry
 from wpimath.geometry import Rotation2d, Pose2d, Twist2d
 import wpimath.kinematics

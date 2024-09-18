@@ -1,5 +1,4 @@
 # standard python imports
-import math
 import pint
 
 # project imports
@@ -7,7 +6,6 @@ from constants import Drive as constants
 from constants import unit as unit
 
 # wpi imports
-import wpilib
 import wpimath.kinematics
 import wpimath.geometry
 import wpimath.controller

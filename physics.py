@@ -1,18 +1,13 @@
-# standard python imports
-import math
-import typing
-
 # project imports
 from robot import MyRobot
 from constants import Drive as constants
 from constants import unit as unit
 
 # wpi imports
-from wpilib import DriverStation, RobotController, SmartDashboard
+from wpilib import DriverStation, RobotController
 import wpilib.simulation as sim
 from wpimath.system.plant import DCMotor
 from pyfrc.physics.core import PhysicsInterface
-from pyfrc.physics import drivetrains
 
 # vendor imports
 from  phoenix6.sim import ChassisReference
