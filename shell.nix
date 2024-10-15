@@ -3,7 +3,7 @@ let
 	fhs = pkgs.buildFHSUserEnv {
 		name = "my-fhs-environment";
 
-		targetPkgs = _: with pkgs; [ python3 xorg.libX11 libGL mypy ];
+		targetPkgs = _: with pkgs; [ python3 xorg.libX11 libGL ];
 
 		profile = ''
 			set -e
