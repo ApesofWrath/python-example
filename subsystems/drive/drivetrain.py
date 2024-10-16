@@ -97,11 +97,12 @@ class Drivetrain(commands2.Subsystem):
 			swerveModuleStates, constants.kMaxSpeed.m_as("meter / second")
 		)
 
-		target_states = \
-		[self.frontLeft.setDesiredState(swerveModuleStates[0]),
-		 self.frontRight.setDesiredState(swerveModuleStates[1]),
-		 self.backLeft.setDesiredState(swerveModuleStates[2]),
-		 self.backRight.setDesiredState(swerveModuleStates[3])]
+		target_states = [
+			self.frontLeft.setDesiredState(swerveModuleStates[0]),
+			self.frontRight.setDesiredState(swerveModuleStates[1]),
+			self.backLeft.setDesiredState(swerveModuleStates[2]),
+			self.backRight.setDesiredState(swerveModuleStates[3])
+		]
 		
 		self.smst_pub.set(target_states)
 
@@ -132,10 +133,12 @@ class Drivetrain(commands2.Subsystem):
 		if self._isReal:
 			return Rotation2d.fromDegrees(self.gyro.get_yaw().refresh().value)
 		else:
-			chSpds = self.kinematics.toChassisSpeeds([self.frontLeft.getState(),
-														self.frontRight.getState(),
-														self.backLeft.getState(),
-														self.backRight.getState(),])
+			chSpds = self.kinematics.toChassisSpeeds([
+				self.frontLeft.getState(),
+				self.frontRight.getState(),
+				self.backLeft.getState(),
+				self.backRight.getState()
+			])
 			self._simPose = self._simPose.exp(
 				Twist2d(chSpds.vx * 0.02, chSpds.vy * 0.02, chSpds.omega * 0.02)
 			)

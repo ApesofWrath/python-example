@@ -47,10 +47,12 @@ class PhysicsEngine:
 		frontRightTurn.setState(0,0)
 		self.drivetrain.frontRight.turningMotor.sim_state.set_raw_rotor_position(0)
 		
-		self.swerve_sim_devices = [[self.drivetrain.backLeft.driveMotor.sim_state, sim.DCMotorSim(DCMotor.krakenX60(1), self.drive_ratio, 0.01), self.drivetrain.backLeft.turningMotor.sim_state, backLeftTurn, self.drivetrain.backLeft.turningEncoder.sim_state],
-					  [self.drivetrain.backRight.driveMotor.sim_state, sim.DCMotorSim(DCMotor.krakenX60(1), self.drive_ratio, 0.01), self.drivetrain.backRight.turningMotor.sim_state, backRightTurn, self.drivetrain.backRight.turningEncoder.sim_state],
-					  [self.drivetrain.frontLeft.driveMotor.sim_state, sim.DCMotorSim(DCMotor.krakenX60(1), self.drive_ratio, 0.01), self.drivetrain.frontLeft.turningMotor.sim_state, frontLeftTurn, self.drivetrain.frontLeft.turningEncoder.sim_state],
-					  [self.drivetrain.frontRight.driveMotor.sim_state,sim.DCMotorSim(DCMotor.krakenX60(1),self.drive_ratio, 0.01),self.drivetrain.frontRight.turningMotor.sim_state,frontRightTurn,self.drivetrain.frontRight.turningEncoder.sim_state]]
+		self.swerve_sim_devices = [
+			[self.drivetrain.backLeft.driveMotor.sim_state, sim.DCMotorSim(DCMotor.krakenX60(1), self.drive_ratio, 0.01), self.drivetrain.backLeft.turningMotor.sim_state, backLeftTurn, self.drivetrain.backLeft.turningEncoder.sim_state],
+			[self.drivetrain.backRight.driveMotor.sim_state, sim.DCMotorSim(DCMotor.krakenX60(1), self.drive_ratio, 0.01), self.drivetrain.backRight.turningMotor.sim_state, backRightTurn, self.drivetrain.backRight.turningEncoder.sim_state],
+			[self.drivetrain.frontLeft.driveMotor.sim_state, sim.DCMotorSim(DCMotor.krakenX60(1), self.drive_ratio, 0.01), self.drivetrain.frontLeft.turningMotor.sim_state, frontLeftTurn, self.drivetrain.frontLeft.turningEncoder.sim_state],
+			[self.drivetrain.frontRight.driveMotor.sim_state,sim.DCMotorSim(DCMotor.krakenX60(1),self.drive_ratio, 0.01),self.drivetrain.frontRight.turningMotor.sim_state,frontRightTurn,self.drivetrain.frontRight.turningEncoder.sim_state]
+		]
 
 		self.drivetrain.backLeft.turningMotor.sim_state.orientation = ChassisReference.Clockwise_Positive
 		self.drivetrain.backRight.turningMotor.sim_state.orientation = ChassisReference.Clockwise_Positive
