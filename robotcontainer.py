@@ -48,6 +48,10 @@ class RobotContainer:
 			)
 		)
 
+		# Build an auto chooser. This will use Commands.none() as the default option.
+		self.autoChooser = AutoBuilder.buildAutoChooser()
+		SmartDashboard.putData("Auto Chooser", self.autoChooser)
+
 	def configureButtonBindings(self) -> None:
 		"""
 		Use this method to define your button->command mappings. Buttons can be created via the button
@@ -60,8 +64,8 @@ class RobotContainer:
 		self.driverController.x().onTrue(cmd.runOnce(lambda: self.turntable.turndeg(90), self.turntable))
 		self.driverController.y().onTrue(cmd.runOnce(lambda: self.turntable.turnto(0), self.turntable))
 		# TODO: how to press bumpers on keyboard?
-		self.driverController.leftBumper().onTrue(cmd.runOnce(self.spinner.slow))
-		self.driverController.rightBumper().onTrue(cmd.runOnce(self.spinner.fast))
+		self.driverController.leftBumper().onTrue(self.spinner.slow())
+		self.driverController.rightBumper().onTrue(self.spinner.fast())
 
 	def getAutonomousCommand(self) -> commands2.Command:
 		"""
@@ -69,5 +73,4 @@ class RobotContainer:
 
 		:returns: the command to run in autonomous
 		"""
-		return commands2.InstantCommand()
-		# TODO: auton
+		return self.autoChooser.getSelected()

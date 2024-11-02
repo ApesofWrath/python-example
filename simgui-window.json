@@ -5,7 +5,7 @@
       "DockNode        ID=0x00000012 Parent=0x0000000F SizeRef=1386,578 Split=Y",
       "DockNode      ID=0x00000011 Parent=0x00000012 SizeRef=1386,547 Split=X",
       "DockNode    ID=0x00000009 Parent=0x00000011 SizeRef=625,584 Split=Y Selected=0x2D9B9756",
-      "DockNode  ID=0x00000007 Parent=0x00000009 SizeRef=625,283 Selected=0x2D9B9756",
+      "DockNode  ID=0x00000007 Parent=0x00000009 SizeRef=625,283 Selected=0x513EDE86",
       "DockNode  ID=0x00000008 Parent=0x00000009 SizeRef=625,262 Selected=0x6AE6D891",
       "DockNode    ID=0x00000010 Parent=0x00000011 SizeRef=759,584 Selected=0x223B1142",
       "DockNode      ID=0x00000004 Parent=0x00000012 SizeRef=1386,245 Split=X",
@@ -39,6 +39,12 @@
     }
   },
   "Window": {
+    "###/SmartDashboard/Auto Chooser": {
+      "Collapsed": "0",
+      "DockId": "0x00000007,2",
+      "Pos": "0,18",
+      "Size": "866,284"
+    },
     "###/SmartDashboard/Field": {
       "Collapsed": "0",
       "Pos": "937,518",
