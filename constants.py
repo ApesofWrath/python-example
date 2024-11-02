@@ -54,6 +54,7 @@ class Drive:
 	kMaxAngularSpeed = math.pi * unit.radian / unit.second  # 1/2 rotation per second
 	kChassisWidth = 28.0 * unit.inch
 	kChassisLength = 28.0 * unit.inch
+	kChassisRadius = math.sqrt(kChassisWidth.m * kChassisWidth.m + kChassisLength.m * kChassisLength.m) * unit.inch
 	kGyroId = 20
 
 class Turntable:

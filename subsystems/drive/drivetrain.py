@@ -11,12 +11,17 @@ from wpilib import SmartDashboard, Field2d
 import wpimath.geometry
 from wpimath.geometry import Rotation2d, Pose2d, Twist2d
 import wpimath.kinematics
-from wpimath.kinematics import SwerveModuleState
+from wpimath.kinematics import SwerveModuleState, ChassisSpeeds
 import commands2
 import ntcore
 
 # vendor imports
 from phoenix6.hardware.pigeon2 import Pigeon2
+
+# auton imports
+from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.config import HolonomicPathFollowerConfig, ReplanningConfig, PIDConstants
+from wpilib import DriverStation
 
 class Drivetrain(commands2.Subsystem):
 	"""
@@ -70,6 +75,23 @@ class Drivetrain(commands2.Subsystem):
 		smst_topic = nt.getStructArrayTopic("/SwerveStatesTarget", SwerveModuleState)
 		self.smst_pub = smst_topic.publish()
 
+		# Configure the AutoBuilder last
+		AutoBuilder.configureHolonomic(
+			self.getPose, # Robot pose supplier
+			self.resetPose, # Method to reset odometry (will be called if your auto has a starting pose)
+			self.getRobotRelativeSpeeds, # ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+			self.driveRobotRelative, # Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+			HolonomicPathFollowerConfig( # HolonomicPathFollowerConfig, this should likely live in your Constants class
+				PIDConstants(5.0, 1.0, 0.0), # Translation PID constants
+				PIDConstants(7.0, 3.5, 0.0), # Rotation PID constants
+				constants.kMaxSpeed.m_as("meter / second"), # Max module speed, in m/s
+				constants.kChassisRadius.m_as("meter"), # Drive base radius in meters. Distance from robot center to furthest module.
+				ReplanningConfig() # Default path replanning config. See the API for the options here
+			),
+			lambda: DriverStation.getAlliance() == DriverStation.Alliance.kRed, # Supplier to control path flipping based on alliance color
+			self # Reference to this subsystem to set requirements
+		)
+
 	def drive(
 		self,
 		xSpeed: float,
@@ -104,6 +126,22 @@ class Drivetrain(commands2.Subsystem):
 			self.backRight.setDesiredState(swerveModuleStates[3])
 		]
 		
+		self.smst_pub.set(target_states)
+
+	def driveRobotRelative(self, robotRelativeSpeeds: ChassisSpeeds):
+		#TODO: Discretization
+		swerveModuleStates = self.kinematics.toSwerveModuleStates(robotRelativeSpeeds)
+
+		wpimath.kinematics.SwerveDrive4Kinematics.desaturateWheelSpeeds(
+			swerveModuleStates, constants.kMaxSpeed.m_as("meter / second")
+		)
+
+		target_states = \
+		[self.frontLeft.setDesiredState(swerveModuleStates[0]),
+		 self.frontRight.setDesiredState(swerveModuleStates[1]),
+		 self.backLeft.setDesiredState(swerveModuleStates[2]),
+		 self.backRight.setDesiredState(swerveModuleStates[3])]
+
 		self.smst_pub.set(target_states)
 
 	def updateOdometry(self) -> None:
@@ -144,6 +182,15 @@ class Drivetrain(commands2.Subsystem):
 			)
 			noise = Rotation2d.fromDegrees(random.uniform(-1.25, 1.25))
 			return self._simPose.rotation() + noise
+
+	def getPose(self) -> Pose2d:
+		return self.odometry.getPose()
+
+	def resetPose(self, pose: Pose2d) -> None:
+		self.odometry.resetPosition(self.getPigeonRotation2d(), (self.frontLeft.getPosition(), self.frontRight.getPosition(), self.backLeft.getPosition(), self.backRight.getPosition()), pose)
+
+	def getRobotRelativeSpeeds(self) -> ChassisSpeeds:
+		return self.kinematics.toChassisSpeeds((self.frontLeft.getState(), self.frontRight.getState(), self.backLeft.getState(), self.backRight.getState()))
 
 	def periodic(self) -> None:
 		self.updateOdometry()
