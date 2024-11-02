@@ -1,13 +1,15 @@
 import math
 from pint import UnitRegistry
 
+# real-world unit types
 unit = UnitRegistry()
 
 class Global:
+	# dashboard port used by the driver controller
 	kDriverControllerPort = 0
 
 class Drive:
-	# module configs
+	# motor module configs
 	frontLeft = {
 		"driveMotorId": 3,
 		"turningMotorId": 4,
@@ -55,9 +57,13 @@ class Drive:
 	kGyroId = 20
 
 class Turntable:
+	# motor ID as set in the firmware
 	driveMotorId = 13
+	# PIDv values for motor speed controll
 	motorPID = {"p":.01,"i":0,"d":0,"v":.12}
 
 class Spinner:
+	# motor ID as set in the firmware
 	driveMotorId = 14
+	# PIDv values for motor speed controll
 	motorPID = {"p":.01,"i":0,"d":0,"v":.12}
