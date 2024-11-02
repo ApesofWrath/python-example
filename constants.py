@@ -1,5 +1,6 @@
 import math
 from pint import UnitRegistry
+from pathplannerlib.config import RobotConfig
 
 unit = UnitRegistry()
 
@@ -53,6 +54,7 @@ class Drive:
 	kChassisWidth = 28.0 * unit.inch
 	kChassisLength = 28.0 * unit.inch
 	kGyroId = 20
+	config = RobotConfig.fromGUISettings()
 
 class Turntable:
 	driveMotorId = 13

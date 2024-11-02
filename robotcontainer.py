@@ -4,10 +4,15 @@ import constants
 from subsystems import turntable
 from subsystems import spinner
 
+
 # wpi imports
 import wpimath
 import commands2
 import commands2.cmd as cmd
+
+#auton imports
+from pathplannerlib.auto import PathPlannerAuto
+from pathplannerlib.auto import AutoBuilder
 
 class RobotContainer:
 	"""
@@ -46,6 +51,9 @@ class RobotContainer:
 				),
 				self.robotDrive,
 			)
+
+		self.autoChooser = AutoBuilder.buildAutoChooser()
+		SmartDashboard.putData("Auto Chooser", self.autoChooser)
 		)
 
 	def configureButtonBindings(self) -> None:
@@ -71,3 +79,4 @@ class RobotContainer:
 		"""
 		return commands2.InstantCommand()
 		# TODO: auton
+        return self.autoChooser.getSelected()

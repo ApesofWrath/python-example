@@ -15,6 +15,12 @@ from wpimath.kinematics import SwerveModuleState
 import commands2
 import ntcore
 
+# auto imports
+from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.controller import PPHolonomicDriveController
+from pathplannerlib.config import PIDConstants
+from wpilib import DriverStation
+
 # vendor imports
 from phoenix6.hardware.pigeon2 import Pigeon2
 
@@ -69,6 +75,21 @@ class Drivetrain(commands2.Subsystem):
 
 		smst_topic = nt.getStructArrayTopic("/SwerveStatesTarget", SwerveModuleState)
 		self.smst_pub = smst_topic.publish()
+
+		# Configure the AutoBuilder
+		AutoBuilder.configureHolonomic(
+            self.getPose, # Robot pose supplier
+            self.resetPose, # Method to reset odometry (will be called if your auto has a starting pose)
+            self.getRobotRelativeSpeeds, # ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            lambda speeds, feedforwards: self.driveRobotRelative(speeds), # Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also outputs individual module feedforwards
+            PPHolonomicDriveController( # PPHolonomicController is the built in path following controller for holonomic drive trains
+                PIDConstants(constants.kDrive_p, constants.kDrive_i, constants.kDrive_d), # Translation PID constants
+                PIDConstants(constants.kTurn_p, constants.kTurn_i, constants.kTurn_d) # Rotation PID constants
+            ),
+            config, # The robot configuration
+            DriverStation.getAlliance() == DriverStation.Alliance.kRed, # Supplier to control path flipping based on alliance color
+            self # Reference to this subsystem to set requirements
+        )
 
 	def drive(
 		self,
