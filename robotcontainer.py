@@ -8,6 +8,8 @@ from subsystems import spinner
 import wpimath
 import commands2
 import commands2.cmd as cmd
+from pathplannerlib.auto import AutoBuilder, NamedCommands
+from wpilib import SmartDashboard
 
 class RobotContainer:
 	"""
@@ -24,6 +26,10 @@ class RobotContainer:
 		self.robotDrive = subsystems.drive.drivetrain.Drivetrain(isReal=isReal)
 		self.turntable = turntable.Turntable()
 		self.spinner = spinner.Spinner()
+
+		# The robot's commands
+		NamedCommands.registerCommand("spinner.slow", self.spinner.slow())
+		NamedCommands.registerCommand("spinner.fast", self.spinner.fast())
 
 		# The driver's controller
 		self.driverController = commands2.button.CommandXboxController(constants.Global.kDriverControllerPort)
@@ -59,10 +65,10 @@ class RobotContainer:
 		subclasses (commands2.button.CommandJoystick or command2.button.CommandXboxController).
 		"""
 
-		self.driverController.a().onTrue(cmd.runOnce(lambda: self.turntable.freespin(2), self.turntable)).onFalse(cmd.runOnce(lambda: self.turntable.freespin(0), self.turntable))
-		self.driverController.b().onTrue(cmd.runOnce(lambda: self.turntable.freespin(-2), self.turntable)).onFalse(cmd.runOnce(lambda: self.turntable.freespin(0), self.turntable))
-		self.driverController.x().onTrue(cmd.runOnce(lambda: self.turntable.turndeg(90), self.turntable))
-		self.driverController.y().onTrue(cmd.runOnce(lambda: self.turntable.turnto(0), self.turntable))
+		self.driverController.a().onTrue(self.turntable.freespin(2)).onFalse(self.turntable.freespin(0))
+		self.driverController.b().onTrue(self.turntable.freespin(-2)).onFalse(self.turntable.freespin(0))
+		self.driverController.x().onTrue(self.turntable.turndeg(90))
+		self.driverController.y().onTrue(self.turntable.turnto(0))
 		# TODO: how to press bumpers on keyboard?
 		self.driverController.leftBumper().onTrue(self.spinner.slow())
 		self.driverController.rightBumper().onTrue(self.spinner.fast())
