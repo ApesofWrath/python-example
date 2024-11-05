@@ -1,8 +1,14 @@
 import math
 from pint import UnitRegistry
+import commands2.cmd as cmd
 
 # real-world unit types
 unit = UnitRegistry()
+
+def makeCommand(func):
+	def cmdFn(*args, **kwargs):
+		return cmd.runOnce(lambda: func(*args, **kwargs))
+	return cmdFn
 
 class Global:
 	# dashboard port used by the driver controller

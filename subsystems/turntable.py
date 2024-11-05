@@ -1,9 +1,9 @@
-# standard imports
+# project imports
 from constants import Turntable as constants
+from constants import makeCommand as makeCommand
 
 # wpi imports
 import commands2
-import commands2.cmd as cmd
 import wpimath.controller
 from wpilib import SmartDashboard
 
@@ -31,25 +31,18 @@ class Turntable(commands2.PIDSubsystem):
 		slot0Config.k_v = constants.motorPID["v"]
 		self.motor.configurator.apply(motor_cfg)
 
-	def __freespin(self, speed: units.rotations_per_second) -> None:
+	@makeCommand
+	def freespin(self, speed: units.rotations_per_second) -> None:
 		turn_request = controls.VelocityVoltage(speed).with_slot(0)
 		self.motor.set_control(turn_request)
 
-	def freespin(self, speed: units.rotations_per_second) -> commands2.Command:
-		return cmd.runOnce(lambda: self.__freespin(speed), self)
-
-	def __turnto(self, position: units.degree) -> None:
+	@makeCommand
+	def turnto(self, position: units.degree) -> None:
 		turn_request = controls.PositionDutyCycle(position/360).with_slot(0)
 		self.motor.set_control(turn_request)
 
-	def turnto(self, position: units.degree) -> commands2.Command:
-		return cmd.runOnce(lambda: self.__turnto(position), self)
-
-	def __turndeg(self, distance: units.degree) -> None:
-		self.__turnto(distance+(360*self.motor.get_position()._value))
-
-	def turndeg(self, distance: units.degree) -> commands2.Command:
-		return cmd.runOnce(lambda: self.__turndeg(distance), self)
+	def turndeg(self, distance: units.degree) -> None:
+		return self.turnto(distance+(360*self.motor.get_position()._value))
 
 	def periodic(self) -> None:
 		super().periodic()
