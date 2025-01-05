@@ -1,2 +1,3 @@
 .venv/
 *.pyc
+tests/ctre_sim

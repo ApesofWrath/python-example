@@ -1,6 +1,6 @@
 { pkgs ? import <nixpkgs> {}}:
 let
-	fhs = pkgs.buildFHSUserEnv {
+	fhs = pkgs.buildFHSEnv {
 		name = "my-fhs-environment";
 
 		targetPkgs = _: with pkgs; [ python3 xorg.libX11 libGL ];
