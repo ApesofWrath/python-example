@@ -20,7 +20,8 @@ from phoenix6.hardware.pigeon2 import Pigeon2
 
 # auton imports
 from pathplannerlib.auto import AutoBuilder
-from pathplannerlib.config import HolonomicPathFollowerConfig, ReplanningConfig, PIDConstants
+from pathplannerlib.controller import PPHolonomicDriveController
+from pathplannerlib.config import RobotConfig, PIDConstants
 from wpilib import DriverStation
 
 class Drivetrain(commands2.Subsystem):
@@ -76,18 +77,16 @@ class Drivetrain(commands2.Subsystem):
 		self.smst_pub = smst_topic.publish()
 
 		# Configure the AutoBuilder last
-		AutoBuilder.configureHolonomic(
+		AutoBuilder.configure(
 			self.getPose, # Robot pose supplier
 			self.resetPose, # Method to reset odometry (will be called if your auto has a starting pose)
 			self.getRobotRelativeSpeeds, # ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-			self.driveRobotRelative, # Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-			HolonomicPathFollowerConfig( # HolonomicPathFollowerConfig, this should likely live in your Constants class
-				PIDConstants(5.0, 1.0, 0.0), # Translation PID constants
-				PIDConstants(7.0, 3.5, 0.0), # Rotation PID constants
-				constants.kMaxSpeed.m_as("meter / second"), # Max module speed, in m/s
-				constants.kChassisRadius.m_as("meter"), # Drive base radius in meters. Distance from robot center to furthest module.
-				ReplanningConfig() # Default path replanning config. See the API for the options here
+			lambda speeds, _: self.driveRobotRelative(speeds), # Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also outputs individual module feedforwards
+			PPHolonomicDriveController( # PPHolonomicController is the built in path following controller for holonomic drive trains
+				PIDConstants(5.0, 0.0, 0.0), # Translation PID constants
+				PIDConstants(5.0, 0.0, 0.0) # Rotation PID constants
 			),
+			RobotConfig.fromGUISettings(),
 			lambda: DriverStation.getAlliance() == DriverStation.Alliance.kRed, # Supplier to control path flipping based on alliance color
 			self # Reference to this subsystem to set requirements
 		)

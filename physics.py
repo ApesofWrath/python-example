@@ -34,6 +34,7 @@ class PhysicsEngine:
 		self.drive_ratio = constants.kDriveRatio
 		self.turn_ratio = constants.kTurnRatio
 
+		# TODO: they changed the DCMotorSim constructor and it broke this
 		backLeftTurn = sim.DCMotorSim(DCMotor.krakenX60(1), self.turn_ratio, 0.01)
 		backLeftTurn.setState(0,0)
 		self.drivetrain.backLeft.turningMotor.sim_state.set_raw_rotor_position(0)
