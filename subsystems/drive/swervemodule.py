@@ -54,7 +54,7 @@ class SwerveModule:
 		self.turningEncoder = CANcoder(turningEncoderId)
 
 		cc_cfg = configs.CANcoderConfiguration()
-		cc_cfg.magnet_sensor.absolute_sensor_range = signals.AbsoluteSensorRangeValue.SIGNED_PLUS_MINUS_HALF
+		cc_cfg.magnet_sensor.absolute_sensor_range = configs.MagnetSensorConfigs().absolute_sensor_discontinuity_point
 		cc_cfg.magnet_sensor.sensor_direction = signals.SensorDirectionValue.COUNTER_CLOCKWISE_POSITIVE
 		cc_cfg.magnet_sensor.magnet_offset = offset.m_as("turn") # do this in Phoenix Tuner X instead
 		self.turningEncoder.configurator.apply(cc_cfg)

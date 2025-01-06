@@ -4,6 +4,7 @@ from enum import Enum
 
 # wpi imports
 import commands2
+import commands2.cmd as cmd
 import wpimath.controller
 from wpilib import SmartDashboard
 
@@ -34,11 +35,14 @@ class Spinner(commands2.PIDSubsystem):
 		self.states = Enum("States", ["SLOW","FAST"]) # type: ignore
 		self.state = self.states.SLOW
 
-	def slow(self) -> None:
-		self.state = self.states.SLOW
+	def setState(self, state) -> None:
+		self.state = state
+	
+	def slow(self) -> commands2.Command:
+		return cmd.runOnce(lambda: self.setState(self.states.SLOW))
 
-	def fast(self) -> None:
-		self.state = self.states.FAST
+	def fast(self) -> commands2.Command:
+		return cmd.runOnce(lambda: self.setState(self.states.FAST))
 
 	def periodic(self) -> None:
 		super().periodic()

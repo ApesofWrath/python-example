@@ -1,5 +1,6 @@
-# standard imports
+# project imports
 from constants import Turntable as constants
+from constants import makeCommand as makeCommand
 
 # wpi imports
 import commands2
@@ -30,16 +31,18 @@ class Turntable(commands2.PIDSubsystem):
 		slot0Config.k_v = constants.motorPID["v"]
 		self.motor.configurator.apply(motor_cfg)
 
+	@makeCommand
 	def freespin(self, speed: units.rotations_per_second) -> None:
 		turn_request = controls.VelocityVoltage(speed).with_slot(0)
 		self.motor.set_control(turn_request)
 
+	@makeCommand
 	def turnto(self, position: units.degree) -> None:
 		turn_request = controls.PositionDutyCycle(position/360).with_slot(0)
 		self.motor.set_control(turn_request)
 
 	def turndeg(self, distance: units.degree) -> None:
-		self.turnto(distance+(360*self.motor.get_position()._value))
+		return self.turnto(distance+(360*self.motor.get_position()._value))
 
 	def periodic(self) -> None:
 		super().periodic()

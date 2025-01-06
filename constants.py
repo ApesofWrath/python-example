@@ -1,8 +1,14 @@
 import math
 from pint import UnitRegistry
+import commands2.cmd as cmd
 
 # real-world unit types
 unit = UnitRegistry()
+
+def makeCommand(func):
+	def cmdFn(*args, **kwargs):
+		return cmd.runOnce(lambda: func(*args, **kwargs))
+	return cmdFn
 
 class Global:
 	# dashboard port used by the driver controller
@@ -54,6 +60,7 @@ class Drive:
 	kMaxAngularSpeed = math.pi * unit.radian / unit.second  # 1/2 rotation per second
 	kChassisWidth = 28.0 * unit.inch
 	kChassisLength = 28.0 * unit.inch
+	kChassisRadius = math.sqrt(kChassisWidth.m * kChassisWidth.m + kChassisLength.m * kChassisLength.m) * unit.inch
 	kGyroId = 20
 
 class Turntable:
