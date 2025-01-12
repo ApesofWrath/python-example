@@ -1,11 +1,11 @@
 {
   "Docking": {
     "Data": [
-      "DockNode          ID=0x0000000F Pos=0,18 Size=1919,1062 Split=Y",
+      "DockNode          ID=0x0000000F Pos=0,18 Size=2175,1449 Split=Y",
       "DockNode        ID=0x00000012 Parent=0x0000000F SizeRef=1386,578 Split=Y",
       "DockNode      ID=0x00000011 Parent=0x00000012 SizeRef=1386,547 Split=X",
       "DockNode    ID=0x00000009 Parent=0x00000011 SizeRef=625,584 Split=Y Selected=0x2D9B9756",
-      "DockNode  ID=0x00000007 Parent=0x00000009 SizeRef=625,283 Selected=0x48913727",
+      "DockNode  ID=0x00000007 Parent=0x00000009 SizeRef=625,283 Selected=0x513EDE86",
       "DockNode  ID=0x00000008 Parent=0x00000009 SizeRef=625,262 Selected=0x6AE6D891",
       "DockNode    ID=0x00000010 Parent=0x00000011 SizeRef=759,584 Selected=0x223B1142",
       "DockNode      ID=0x00000004 Parent=0x00000012 SizeRef=1386,245 Split=X",
@@ -22,13 +22,13 @@
     "GLOBAL": {
       "font": "Proggy Dotted",
       "fps": "120",
-      "height": "1380",
+      "height": "1464",
       "maximized": "1",
       "style": "0",
       "userScale": "2",
-      "width": "2256",
-      "xpos": "224",
-      "ypos": "133"
+      "width": "2172",
+      "xpos": "84",
+      "ypos": "40"
     }
   },
   "Table": {
@@ -44,7 +44,7 @@
       "Collapsed": "0",
       "DockId": "0x00000007,2",
       "Pos": "0,18",
-      "Size": "866,284"
+      "Size": "981,388"
     },
     "###/SmartDashboard/Field": {
       "Collapsed": "0",
@@ -54,20 +54,20 @@
     "###/SmartDashboard/odo_raw": {
       "Collapsed": "0",
       "DockId": "0x00000010,0",
-      "Pos": "868,18",
-      "Size": "1051,549"
+      "Pos": "983,18",
+      "Size": "1192,750"
     },
     "###FMS": {
       "Collapsed": "0",
       "DockId": "0x0000000E,0",
-      "Pos": "807,817",
-      "Size": "1112,263"
+      "Pos": "915,1108",
+      "Size": "1260,359"
     },
     "###Joysticks": {
       "Collapsed": "0",
       "DockId": "0x00000005,0",
-      "Pos": "782,569",
-      "Size": "1137,246"
+      "Pos": "886,770",
+      "Size": "1289,336"
     },
     "###Keyboard 0 Settings": {
       "Collapsed": "0",
@@ -78,19 +78,19 @@
       "Collapsed": "0",
       "DockId": "0x00000007,0",
       "Pos": "0,18",
-      "Size": "866,284"
+      "Size": "981,388"
     },
     "###NetworkTables Info": {
       "Collapsed": "0",
       "DockId": "0x00000007,1",
       "Pos": "0,18",
-      "Size": "866,284"
+      "Size": "981,388"
     },
     "###Other Devices": {
       "Collapsed": "0",
       "DockId": "0x00000008,1",
-      "Pos": "0,304",
-      "Size": "866,263"
+      "Pos": "0,408",
+      "Size": "981,360"
     },
     "###Plot <0>": {
       "Collapsed": "0",
@@ -100,20 +100,20 @@
     "###RoboRIO": {
       "Collapsed": "0",
       "DockId": "0x0000000D,0",
-      "Pos": "0,817",
-      "Size": "805,263"
+      "Pos": "0,1108",
+      "Size": "913,359"
     },
     "###System Joysticks": {
       "Collapsed": "0",
       "DockId": "0x00000008,0",
-      "Pos": "0,304",
-      "Size": "866,263"
+      "Pos": "0,408",
+      "Size": "981,360"
     },
     "###Timing": {
       "Collapsed": "0",
       "DockId": "0x00000003,0",
-      "Pos": "376,569",
-      "Size": "404,246"
+      "Pos": "426,770",
+      "Size": "458,336"
     },
     "Debug##Default": {
       "Collapsed": "0",
@@ -123,8 +123,8 @@
     "Robot State": {
       "Collapsed": "0",
       "DockId": "0x00000002,0",
-      "Pos": "0,569",
-      "Size": "374,246"
+      "Pos": "0,770",
+      "Size": "424,336"
     }
   }
 }

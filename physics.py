@@ -6,7 +6,7 @@ from constants import unit as unit
 # wpi imports
 from wpilib import DriverStation, RobotController
 import wpilib.simulation as sim
-from wpimath.system.plant import DCMotor
+from wpimath.system.plant import DCMotor, LinearSystemId
 from pyfrc.physics.core import PhysicsInterface
 
 # vendor imports
@@ -34,25 +34,27 @@ class PhysicsEngine:
 		self.drive_ratio = constants.kDriveRatio
 		self.turn_ratio = constants.kTurnRatio
 
+		gearbox = DCMotor.krakenX60(1)
+
 		# TODO: they changed the DCMotorSim constructor and it broke this
-		backLeftTurn = sim.DCMotorSim(DCMotor.krakenX60(1), self.turn_ratio, 0.01)
+		backLeftTurn = sim.DCMotorSim(LinearSystemId.DCMotorSystem(gearbox, 0.01, self.turn_ratio), gearbox)
 		backLeftTurn.setState(0,0)
 		self.drivetrain.backLeft.turningMotor.sim_state.set_raw_rotor_position(0)
-		backRightTurn = sim.DCMotorSim(DCMotor.krakenX60(1), self.turn_ratio, 0.01)
+		backRightTurn = sim.DCMotorSim(LinearSystemId.DCMotorSystem(gearbox, 0.01, self.turn_ratio), gearbox)
 		backRightTurn.setState(0,0)
 		self.drivetrain.backRight.turningMotor.sim_state.set_raw_rotor_position(0)
-		frontLeftTurn = sim.DCMotorSim(DCMotor.krakenX60(1), self.turn_ratio, 0.01)
+		frontLeftTurn = sim.DCMotorSim(LinearSystemId.DCMotorSystem(gearbox, 0.01, self.turn_ratio), gearbox)
 		frontLeftTurn.setState(0,0)
 		self.drivetrain.frontLeft.turningMotor.sim_state.set_raw_rotor_position(0)
-		frontRightTurn = sim.DCMotorSim(DCMotor.krakenX60(1), self.turn_ratio, 0.01)
+		frontRightTurn = sim.DCMotorSim(LinearSystemId.DCMotorSystem(gearbox, 0.01, self.turn_ratio), gearbox)
 		frontRightTurn.setState(0,0)
 		self.drivetrain.frontRight.turningMotor.sim_state.set_raw_rotor_position(0)
 		
 		self.swerve_sim_devices = [
-			[self.drivetrain.backLeft.driveMotor.sim_state, sim.DCMotorSim(DCMotor.krakenX60(1), self.drive_ratio, 0.01), self.drivetrain.backLeft.turningMotor.sim_state, backLeftTurn, self.drivetrain.backLeft.turningEncoder.sim_state],
-			[self.drivetrain.backRight.driveMotor.sim_state, sim.DCMotorSim(DCMotor.krakenX60(1), self.drive_ratio, 0.01), self.drivetrain.backRight.turningMotor.sim_state, backRightTurn, self.drivetrain.backRight.turningEncoder.sim_state],
-			[self.drivetrain.frontLeft.driveMotor.sim_state, sim.DCMotorSim(DCMotor.krakenX60(1), self.drive_ratio, 0.01), self.drivetrain.frontLeft.turningMotor.sim_state, frontLeftTurn, self.drivetrain.frontLeft.turningEncoder.sim_state],
-			[self.drivetrain.frontRight.driveMotor.sim_state,sim.DCMotorSim(DCMotor.krakenX60(1),self.drive_ratio, 0.01),self.drivetrain.frontRight.turningMotor.sim_state,frontRightTurn,self.drivetrain.frontRight.turningEncoder.sim_state]
+			[self.drivetrain.backLeft.driveMotor.sim_state, sim.DCMotorSim(LinearSystemId.DCMotorSystem(gearbox, 0.01, self.drive_ratio), gearbox), self.drivetrain.backLeft.turningMotor.sim_state, backLeftTurn, self.drivetrain.backLeft.turningEncoder.sim_state],
+			[self.drivetrain.backRight.driveMotor.sim_state, sim.DCMotorSim(LinearSystemId.DCMotorSystem(gearbox, 0.01, self.drive_ratio), gearbox), self.drivetrain.backRight.turningMotor.sim_state, backRightTurn, self.drivetrain.backRight.turningEncoder.sim_state],
+			[self.drivetrain.frontLeft.driveMotor.sim_state, sim.DCMotorSim(LinearSystemId.DCMotorSystem(gearbox, 0.01, self.drive_ratio), gearbox), self.drivetrain.frontLeft.turningMotor.sim_state, frontLeftTurn, self.drivetrain.frontLeft.turningEncoder.sim_state],
+			[self.drivetrain.frontRight.driveMotor.sim_state,sim.DCMotorSim(LinearSystemId.DCMotorSystem(gearbox, 0.01, self.drive_ratio), gearbox),self.drivetrain.frontRight.turningMotor.sim_state,frontRightTurn,self.drivetrain.frontRight.turningEncoder.sim_state]
 		]
 
 		self.drivetrain.backLeft.turningMotor.sim_state.orientation = ChassisReference.Clockwise_Positive
@@ -67,7 +69,7 @@ class PhysicsEngine:
 
 		# GENERIC MOTOR INIT
 		self.generic_motors = [robot.container.turntable.motor.sim_state, robot.container.spinner.motor.sim_state]
-		for i in range(len(self.generic_motors)): self.generic_motors[i] = [self.generic_motors[i],sim.DCMotorSim(DCMotor.krakenX60(1), self.drive_ratio, 0.01)]
+		for i in range(len(self.generic_motors)): self.generic_motors[i] = [self.generic_motors[i],sim.DCMotorSim(LinearSystemId.DCMotorSystem(gearbox, 0.01, self.drive_ratio), gearbox)]
 
 	def update_sim(self, now: float, tm_diff: float) -> None:
 		"""

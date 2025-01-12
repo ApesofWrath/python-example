@@ -117,9 +117,8 @@ class SwerveModule:
 		encoderRotation = wpimath.geometry.Rotation2d((self.turningMotor.get_position().refresh().value * unit.turn).m_as("radian"))
 
 		# Optimize the reference state to avoid spinning further than 90 degrees
-		state = wpimath.kinematics.SwerveModuleState.optimize(
-			desiredState, encoderRotation
-		)
+		state = desiredState
+		state.optimize(encoderRotation)
 
 		# Scale speed by cosine of angle error. This scales down movement perpendicular to the desired
 		# direction of travel that can occur when modules change directions. This results in smoother
