@@ -68,7 +68,17 @@ class Drivetrain(commands2.Subsystem):
 
         self.gyro.set_yaw(0)
 
-        self.odometry = wpimath.kinematics.SwerveDrive4Odometry(
+        self.odometry = wpimath.estimator.SwerveDrive4PoseEstimator(
+            wpimath.kinematics.SwerveDrive4Odometry(
+                self.kinematics,
+                self.getPigeonRotation2d(),
+                (
+                    self.frontLeft.getPosition(),
+                    self.frontRight.getPosition(),
+                    self.backLeft.getPosition(),
+                    self.backRight.getPosition(),
+                ),
+            ),
             self.kinematics,
             self.getPigeonRotation2d(),
             (
@@ -89,7 +99,9 @@ class Drivetrain(commands2.Subsystem):
         smst_topic = nt.getStructArrayTopic("/SwerveStatesTarget", SwerveModuleState)
         self.smst_pub = smst_topic.publish()
 
-        self.inner_robot_orientation_entry = nt.getTable("limelight").getEntry("robot_orientation_set")
+        self.inner_robot_orientation_entry = nt.getTable("limelight").getEntry(
+            "robot_orientation_set"
+        )
 
         # Configure the AutoBuilder last
         AutoBuilder.configure(
@@ -110,8 +122,11 @@ class Drivetrain(commands2.Subsystem):
         )
 
     def update_nt_orientation(self, orientation: Rotation2d) -> None:
-        #SET Robot Orientation and angular velocities in degrees and degrees per second[yaw,yawrate,pitch,pitchrate,roll,rollrate]
-        self.inner_robot_orientation_entry.setDoubleArray([orientation.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0], 0)
+        # TODO: doesn't update velocities or pitch/roll
+        # SET Robot Orientation and angular velocities in degrees and degrees per second[yaw,yawrate,pitch,pitchrate,roll,rollrate]
+        self.inner_robot_orientation_entry.setDoubleArray(
+            [orientation.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0], 0
+        )
 
     def drive(
         self,
