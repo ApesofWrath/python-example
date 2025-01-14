@@ -10,7 +10,7 @@ from constants import Drive as constants
 from wpilib import SmartDashboard, Field2d
 from wpimath import estimator
 import wpimath.geometry
-from wpimath.geometry import Rotation2d, Pose2d, Twist2d
+from wpimath.geometry import Rotation2d, Pose2d, Twist2d, Transform2d
 import wpimath.kinematics
 from wpimath.kinematics import SwerveModuleState, ChassisSpeeds
 import commands2
@@ -90,6 +90,7 @@ class Drivetrain(commands2.Subsystem):
         smst_topic = nt.getStructArrayTopic("/SwerveStatesTarget", SwerveModuleState)
         self.smst_pub = smst_topic.publish()
 
+        self.inner_robot_position_entry = nt.getTable("limelight").getEntry("botpose_orb_wpired")
         self.inner_robot_orientation_entry = nt.getTable("limelight").getEntry(
             "robot_orientation_set"
         )
@@ -120,8 +121,26 @@ class Drivetrain(commands2.Subsystem):
         )
 
     def insert_limelight_measurement(self) -> None:
-        self.odometry
-        pass
+        pose = self.inner_robot_position_entry.getDoubleArray(None)
+        if pose != None:
+            x = pose[0]
+            y = pose[1]
+            _z = pose[2]
+            _roll = pose[3]
+            _pitch = pose[4]
+            yaw = pose[5]
+            latency = pose[6]
+            tag_count = pose[7]
+            _tag_span = pose[8]
+            _avg_tag_distance = pose[9]
+            _avg_tag_area = pose[10]
+            timestamp = self.inner_robot_position_entry.getLastChange() + latency
+            # TODO: have cutoff for avg_tag_distance
+            if tag_count > 0:
+                pose2d = Pose2d(x, y, Rotation2d(yaw))
+
+                # TODO: is timestamp the right timestamp
+                self.odometry.addVisionMeasurement(pose2d, timestamp)
 
     def drive(
         self,
@@ -196,6 +215,7 @@ class Drivetrain(commands2.Subsystem):
         )
 
         self.update_nt_orientation(rotation2d)
+        self.insert_limelight_measurement()
         SmartDashboard.putNumber("yaw", (rotation2d.radians()))
 
         self.field.setRobotPose(self.odometry.getPose())
