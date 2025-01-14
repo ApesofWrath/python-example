@@ -31,6 +31,7 @@ class Drivetrain(commands2.Subsystem):
     """
 
     def __init__(self, isReal: bool = True) -> None:
+        super().__init__()
         self._isReal = isReal
         self._simPose = Pose2d()
 
@@ -88,6 +89,8 @@ class Drivetrain(commands2.Subsystem):
         smst_topic = nt.getStructArrayTopic("/SwerveStatesTarget", SwerveModuleState)
         self.smst_pub = smst_topic.publish()
 
+        self.inner_robot_orientation_entry = nt.getTable("limelight").getEntry("robot_orientation_set")
+
         # Configure the AutoBuilder last
         AutoBuilder.configure(
             self.getPose,  # Robot pose supplier
@@ -105,6 +108,10 @@ class Drivetrain(commands2.Subsystem):
             == DriverStation.Alliance.kRed,  # Supplier to control path flipping based on alliance color
             self,  # Reference to this subsystem to set requirements
         )
+
+    def update_nt_orientation(self, orientation: Rotation2d) -> None:
+        #SET Robot Orientation and angular velocities in degrees and degrees per second[yaw,yawrate,pitch,pitchrate,roll,rollrate]
+        self.inner_robot_orientation_entry.setDoubleArray([orientation.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0], 0)
 
     def drive(
         self,
@@ -167,8 +174,9 @@ class Drivetrain(commands2.Subsystem):
         self.backLeft.update()
         self.backRight.update()
 
+        rotation2d = self.getPigeonRotation2d()
         self.odometry.update(
-            self.getPigeonRotation2d(),
+            rotation2d,
             (
                 self.frontLeft.getPosition(),
                 self.frontRight.getPosition(),
@@ -177,7 +185,8 @@ class Drivetrain(commands2.Subsystem):
             ),
         )
 
-        SmartDashboard.putNumber("yaw", (self.getPigeonRotation2d().radians()))
+        self.update_nt_orientation(rotation2d)
+        SmartDashboard.putNumber("yaw", (rotation2d.radians()))
 
         self.field.setRobotPose(self.odometry.getPose())
         self.sms_pub.set(
@@ -194,12 +203,12 @@ class Drivetrain(commands2.Subsystem):
             return Rotation2d.fromDegrees(self.gyro.get_yaw().refresh().value)
         else:
             chSpds = self.kinematics.toChassisSpeeds(
-                [
+                (
                     self.frontLeft.getState(),
                     self.frontRight.getState(),
                     self.backLeft.getState(),
                     self.backRight.getState(),
-                ]
+                )
             )
             self._simPose = self._simPose.exp(
                 Twist2d(chSpds.vx * 0.02, chSpds.vy * 0.02, chSpds.omega * 0.02)
