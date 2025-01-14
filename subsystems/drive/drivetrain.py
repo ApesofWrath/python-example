@@ -8,6 +8,7 @@ from constants import Drive as constants
 
 # wpi imports
 from wpilib import SmartDashboard, Field2d
+from wpimath import estimator
 import wpimath.geometry
 from wpimath.geometry import Rotation2d, Pose2d, Twist2d
 import wpimath.kinematics
@@ -68,17 +69,7 @@ class Drivetrain(commands2.Subsystem):
 
         self.gyro.set_yaw(0)
 
-        self.odometry = wpimath.estimator.SwerveDrive4PoseEstimator(
-            wpimath.kinematics.SwerveDrive4Odometry(
-                self.kinematics,
-                self.getPigeonRotation2d(),
-                (
-                    self.frontLeft.getPosition(),
-                    self.frontRight.getPosition(),
-                    self.backLeft.getPosition(),
-                    self.backRight.getPosition(),
-                ),
-            ),
+        self.odometry = estimator.SwerveDrive4PoseEstimator(
             self.kinematics,
             self.getPigeonRotation2d(),
             (
@@ -86,7 +77,7 @@ class Drivetrain(commands2.Subsystem):
                 self.frontRight.getPosition(),
                 self.backLeft.getPosition(),
                 self.backRight.getPosition(),
-            ),
+            )
         )
 
         self.field = Field2d()
@@ -127,6 +118,10 @@ class Drivetrain(commands2.Subsystem):
         self.inner_robot_orientation_entry.setDoubleArray(
             [orientation.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0], 0
         )
+
+    def insert_limelight_measurement(self) -> None:
+        self.odometry
+        pass
 
     def drive(
         self,
