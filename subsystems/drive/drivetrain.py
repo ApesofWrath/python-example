@@ -77,7 +77,7 @@ class Drivetrain(commands2.Subsystem):
                 self.frontRight.getPosition(),
                 self.backLeft.getPosition(),
                 self.backRight.getPosition(),
-            )
+            ),
         )
 
         self.field = Field2d()
@@ -116,9 +116,7 @@ class Drivetrain(commands2.Subsystem):
         # SET Robot Orientation and angular velocities in degrees and degrees per second[yaw,yawrate,pitch,pitchrate,roll,rollrate]
         for table in self.limelight_tables:
             entry = self.nt.getTable(table).getEntry("robot_orientation_set")
-            entry.setDoubleArray(
-                [orientation.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0], 0
-            )
+            entry.setDoubleArray([orientation.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0], 0)
 
     def insert_limelight_measurement(self) -> None:
         poses = []
@@ -130,7 +128,10 @@ class Drivetrain(commands2.Subsystem):
         pose = None
         closest_avg_tag_distance = None
         for try_pose in poses:
-            if closest_avg_tag_distance is None or try_pose[9] < closest_avg_tag_distance:
+            if (
+                closest_avg_tag_distance is None
+                or try_pose[9] < closest_avg_tag_distance
+            ):
                 pose = try_pose
 
         if pose is not None:
