@@ -7,7 +7,6 @@ from subsystems import spinner
 # wpi imports
 import wpimath
 import commands2
-import commands2.cmd as cmd
 from pathplannerlib.auto import AutoBuilder, NamedCommands
 from wpilib import SmartDashboard
 
