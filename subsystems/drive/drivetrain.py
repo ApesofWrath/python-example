@@ -90,10 +90,8 @@ class Drivetrain(commands2.Subsystem):
         smst_topic = nt.getStructArrayTopic("/SwerveStatesTarget", SwerveModuleState)
         self.smst_pub = smst_topic.publish()
 
-        self.inner_robot_position_entry = nt.getTable("limelight").getEntry("botpose_orb_wpired")
-        self.inner_robot_orientation_entry = nt.getTable("limelight").getEntry(
-            "robot_orientation_set"
-        )
+        self.limelight_tables = ["limelight"]
+        self.nt = nt
 
         # Configure the AutoBuilder last
         AutoBuilder.configure(
@@ -116,13 +114,26 @@ class Drivetrain(commands2.Subsystem):
     def update_nt_orientation(self, orientation: Rotation2d) -> None:
         # TODO: doesn't update velocities or pitch/roll
         # SET Robot Orientation and angular velocities in degrees and degrees per second[yaw,yawrate,pitch,pitchrate,roll,rollrate]
-        self.inner_robot_orientation_entry.setDoubleArray(
-            [orientation.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0], 0
-        )
+        for table in self.limelight_tables:
+            entry = self.nt.getTable(table).getEntry("robot_orientation_set")
+            entry.setDoubleArray(
+                [orientation.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0], 0
+            )
 
     def insert_limelight_measurement(self) -> None:
-        pose = self.inner_robot_position_entry.getDoubleArray(None)
-        if pose != None:
+        poses = []
+        for table in self.limelight_tables:
+            entry = self.nt.getTable(table).getEntry("botpose_orb_wpired")
+            pose = entry.getDoubleArray(None)
+            if pose is not None:
+                poses.append(pose)
+        pose = None
+        closest_avg_tag_distance = None
+        for try_pose in poses:
+            if closest_avg_tag_distance is None or try_pose[9] < closest_avg_tag_distance:
+                pose = try_pose
+
+        if pose is not None:
             x = pose[0]
             y = pose[1]
             _z = pose[2]
