@@ -78,6 +78,7 @@ class Drivetrain(commands2.Subsystem):
                 self.backLeft.getPosition(),
                 self.backRight.getPosition(),
             ),
+            Pose2d()
         )
 
         self.field = Field2d()
@@ -124,17 +125,19 @@ class Drivetrain(commands2.Subsystem):
             entry = self.nt.getTable(table).getEntry("botpose_orb_wpired")
             pose = entry.getDoubleArray(None)
             if pose is not None:
-                poses.append(pose)
+                poses.append((pose, entry))
         pose = None
         closest_avg_tag_distance = None
         for try_pose in poses:
             if (
                 closest_avg_tag_distance is None
-                or try_pose[9] < closest_avg_tag_distance
+                or try_pose[0][9] < closest_avg_tag_distance
             ):
                 pose = try_pose
 
         if pose is not None:
+            entry = pose[1]
+            pose = pose[0]
             x = pose[0]
             y = pose[1]
             _z = pose[2]
@@ -146,7 +149,8 @@ class Drivetrain(commands2.Subsystem):
             _tag_span = pose[8]
             _avg_tag_distance = pose[9]
             _avg_tag_area = pose[10]
-            timestamp = self.inner_robot_position_entry.getLastChange() + latency
+            last_change = 0
+            timestamp = entry.getLastChange() + latency
             # TODO: have cutoff for avg_tag_distance
             if tag_count > 0:
                 pose2d = Pose2d(x, y, Rotation2d(yaw))
@@ -230,7 +234,7 @@ class Drivetrain(commands2.Subsystem):
         self.insert_limelight_measurement()
         SmartDashboard.putNumber("yaw", (rotation2d.radians()))
 
-        self.field.setRobotPose(self.odometry.getPose())
+        self.field.setRobotPose(self.getPose())
         self.sms_pub.set(
             [
                 self.frontLeft.getState(),
@@ -259,7 +263,7 @@ class Drivetrain(commands2.Subsystem):
             return self._simPose.rotation() + noise
 
     def getPose(self) -> Pose2d:
-        return self.odometry.getPose()
+        return self.odometry.getEstimatedPosition()
 
     def resetPose(self, pose: Pose2d) -> None:
         self.odometry.resetPosition(
