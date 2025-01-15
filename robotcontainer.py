@@ -82,7 +82,6 @@ class RobotContainer:
         )
         self.driverController.x().onTrue(self.turntable.turndeg(90))
         self.driverController.y().onTrue(self.turntable.turnto(0))
-        # TODO: how to press bumpers on keyboard?
         self.driverController.leftBumper().onTrue(self.spinner.slow())
         self.driverController.rightBumper().onTrue(self.spinner.fast())
 

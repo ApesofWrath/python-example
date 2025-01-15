@@ -37,7 +37,6 @@ class PhysicsEngine:
 
         gearbox = DCMotor.krakenX60(1)
 
-        # TODO: they changed the DCMotorSim constructor and it broke this
         backLeftTurn = sim.DCMotorSim(
             LinearSystemId.DCMotorSystem(gearbox, 0.01, self.turn_ratio), gearbox
         )
