@@ -1,9 +1,5 @@
 # standard python imports
-import math
 import random
-from typing import Optional
-
-from pint import Quantity as Quantity
 
 from subsystems.drive.limelight_pose import LimelightPose
 
@@ -15,7 +11,7 @@ from constants import Drive as constants
 from wpilib import SmartDashboard, Field2d
 from wpimath import estimator
 import wpimath.geometry
-from wpimath.geometry import Rotation2d, Pose2d, Twist2d, Transform2d
+from wpimath.geometry import Rotation2d, Pose2d, Twist2d
 import wpimath.kinematics
 from wpimath.kinematics import SwerveModuleState, ChassisSpeeds
 import commands2
@@ -135,13 +131,13 @@ class Drivetrain(commands2.Subsystem):
             except AttributeError:
                 pass
 
-        def data_value(l: LimelightPose) -> float:
+        def data_value(limelight_pose: LimelightPose) -> float:
             # TODO: better heuristic
             # Prevent division by 0
-            if l.avg_tag_distance == 0:
+            if limelight_pose.avg_tag_distance == 0:
                 return 0
 
-            return l.tag_count / (2 * l.avg_tag_distance)
+            return limelight_pose.tag_count / (2 * limelight_pose.avg_tag_distance)
 
         pose = max(poses, key=data_value)
 
