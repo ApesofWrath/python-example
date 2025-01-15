@@ -8,8 +8,9 @@ from constants import Drive as constants
 
 # wpi imports
 from wpilib import SmartDashboard, Field2d
+from wpimath import estimator
 import wpimath.geometry
-from wpimath.geometry import Rotation2d, Pose2d, Twist2d
+from wpimath.geometry import Rotation2d, Pose2d, Twist2d, Transform2d
 import wpimath.kinematics
 from wpimath.kinematics import SwerveModuleState, ChassisSpeeds
 import commands2
@@ -31,6 +32,7 @@ class Drivetrain(commands2.Subsystem):
     """
 
     def __init__(self, isReal: bool = True) -> None:
+        super().__init__()
         self._isReal = isReal
         self._simPose = Pose2d()
 
@@ -67,7 +69,7 @@ class Drivetrain(commands2.Subsystem):
 
         self.gyro.set_yaw(0)
 
-        self.odometry = wpimath.kinematics.SwerveDrive4Odometry(
+        self.odometry = estimator.SwerveDrive4PoseEstimator(
             self.kinematics,
             self.getPigeonRotation2d(),
             (
@@ -76,6 +78,7 @@ class Drivetrain(commands2.Subsystem):
                 self.backLeft.getPosition(),
                 self.backRight.getPosition(),
             ),
+            Pose2d()
         )
 
         self.field = Field2d()
@@ -87,6 +90,9 @@ class Drivetrain(commands2.Subsystem):
 
         smst_topic = nt.getStructArrayTopic("/SwerveStatesTarget", SwerveModuleState)
         self.smst_pub = smst_topic.publish()
+
+        self.limelight_tables = ["limelight"]
+        self.nt = nt
 
         # Configure the AutoBuilder last
         AutoBuilder.configure(
@@ -105,6 +111,52 @@ class Drivetrain(commands2.Subsystem):
             == DriverStation.Alliance.kRed,  # Supplier to control path flipping based on alliance color
             self,  # Reference to this subsystem to set requirements
         )
+
+    def update_nt_orientation(self, orientation: Rotation2d) -> None:
+        # TODO: doesn't update velocities or pitch/roll
+        # SET Robot Orientation and angular velocities in degrees and degrees per second[yaw,yawrate,pitch,pitchrate,roll,rollrate]
+        for table in self.limelight_tables:
+            entry = self.nt.getTable(table).getEntry("robot_orientation_set")
+            entry.setDoubleArray([orientation.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0], 0)
+
+    def insert_limelight_measurement(self) -> None:
+        poses = []
+        for table in self.limelight_tables:
+            entry = self.nt.getTable(table).getEntry("botpose_orb_wpired")
+            pose = entry.getDoubleArray(None)
+            if pose is not None:
+                poses.append((pose, entry))
+        pose = None
+        closest_avg_tag_distance = None
+        for try_pose in poses:
+            if (
+                closest_avg_tag_distance is None
+                or try_pose[0][9] < closest_avg_tag_distance
+            ):
+                pose = try_pose
+
+        if pose is not None:
+            entry = pose[1]
+            pose = pose[0]
+            x = pose[0]
+            y = pose[1]
+            _z = pose[2]
+            _roll = pose[3]
+            _pitch = pose[4]
+            yaw = pose[5]
+            latency = pose[6]
+            tag_count = pose[7]
+            _tag_span = pose[8]
+            _avg_tag_distance = pose[9]
+            _avg_tag_area = pose[10]
+            last_change = 0
+            timestamp = entry.getLastChange() + latency
+            # TODO: have cutoff for avg_tag_distance
+            if tag_count > 0:
+                pose2d = Pose2d(x, y, Rotation2d(yaw))
+
+                # TODO: is timestamp the right timestamp
+                self.odometry.addVisionMeasurement(pose2d, timestamp)
 
     def drive(
         self,
@@ -167,8 +219,9 @@ class Drivetrain(commands2.Subsystem):
         self.backLeft.update()
         self.backRight.update()
 
+        rotation2d = self.getPigeonRotation2d()
         self.odometry.update(
-            self.getPigeonRotation2d(),
+            rotation2d,
             (
                 self.frontLeft.getPosition(),
                 self.frontRight.getPosition(),
@@ -177,9 +230,11 @@ class Drivetrain(commands2.Subsystem):
             ),
         )
 
-        SmartDashboard.putNumber("yaw", (self.getPigeonRotation2d().radians()))
+        self.update_nt_orientation(rotation2d)
+        self.insert_limelight_measurement()
+        SmartDashboard.putNumber("yaw", (rotation2d.radians()))
 
-        self.field.setRobotPose(self.odometry.getPose())
+        self.field.setRobotPose(self.getPose())
         self.sms_pub.set(
             [
                 self.frontLeft.getState(),
@@ -194,12 +249,12 @@ class Drivetrain(commands2.Subsystem):
             return Rotation2d.fromDegrees(self.gyro.get_yaw().refresh().value)
         else:
             chSpds = self.kinematics.toChassisSpeeds(
-                [
+                (
                     self.frontLeft.getState(),
                     self.frontRight.getState(),
                     self.backLeft.getState(),
                     self.backRight.getState(),
-                ]
+                )
             )
             self._simPose = self._simPose.exp(
                 Twist2d(chSpds.vx * 0.02, chSpds.vy * 0.02, chSpds.omega * 0.02)
@@ -208,7 +263,7 @@ class Drivetrain(commands2.Subsystem):
             return self._simPose.rotation() + noise
 
     def getPose(self) -> Pose2d:
-        return self.odometry.getPose()
+        return self.odometry.getEstimatedPosition()
 
     def resetPose(self, pose: Pose2d) -> None:
         self.odometry.resetPosition(
