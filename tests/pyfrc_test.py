@@ -3,4 +3,4 @@
 	Run with `robotpy test`.
 """
 
-from pyfrc.tests import * # NOQA F403
+from pyfrc.tests import *  # NOQA F403

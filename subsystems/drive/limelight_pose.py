@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 from ntcore import NetworkTableEntry
 
+
 @dataclass(init=False, eq=True)
 class LimelightPose:
     """Class for keeping track of a limelight pose from a nttables entry with attributes."""
+
     entry: NetworkTableEntry
     x: float
     y: float
