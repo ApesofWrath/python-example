@@ -85,15 +85,14 @@ class Drivetrain(commands2.Subsystem):
         self.field = Field2d()
         SmartDashboard.putData("odo_raw", self.field)
 
-        nt = ntcore.NetworkTableInstance.getDefault()
-        sms_topic = nt.getStructArrayTopic("/SwerveStates", SwerveModuleState)
+        self.nt = ntcore.NetworkTableInstance.getDefault()
+        sms_topic = self.nt.getStructArrayTopic("/SwerveStates", SwerveModuleState)
         self.sms_pub = sms_topic.publish()
 
-        smst_topic = nt.getStructArrayTopic("/SwerveStatesTarget", SwerveModuleState)
+        smst_topic = self.nt.getStructArrayTopic("/SwerveStatesTarget", SwerveModuleState)
         self.smst_pub = smst_topic.publish()
 
         self.limelight_tables = ["limelight"]
-        self.nt = nt
 
         # Configure the AutoBuilder last
         AutoBuilder.configure(
