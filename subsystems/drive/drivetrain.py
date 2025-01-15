@@ -138,7 +138,9 @@ class Drivetrain(commands2.Subsystem):
 
             return limelight_pose.tag_count / (2 * limelight_pose.avg_tag_distance)
 
-        pose = max(poses, key=data_value)
+        pose = None
+        if len(poses) > 0:
+            pose = max(poses, key=data_value)
 
         if pose is not None:
             # TODO: have cutoff for avg_tag_distance for accuracies sake
