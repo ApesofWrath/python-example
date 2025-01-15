@@ -1,7 +1,11 @@
 # standard python imports
+import math
 import random
+from typing import Optional
+
 from pint import Quantity as Quantity
 
+from subsystems.drive.limelight_pose import LimelightPose
 # project imports
 from subsystems.drive.swervemodule import SwerveModule
 from constants import Drive as constants
@@ -120,43 +124,33 @@ class Drivetrain(commands2.Subsystem):
             entry.setDoubleArray([orientation.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0], 0)
 
     def insert_limelight_measurement(self) -> None:
-        poses = []
+        poses: list[LimelightPose] = []
+        # Get all poses from limelights
         for table in self.limelight_tables:
             entry = self.nt.getTable(table).getEntry("botpose_orb_wpired")
-            pose = entry.getDoubleArray(None)
-            if pose is not None:
-                poses.append((pose, entry))
-        pose = None
-        closest_avg_tag_distance = None
-        for try_pose in poses:
-            if (
-                closest_avg_tag_distance is None
-                or try_pose[0][9] < closest_avg_tag_distance
-            ):
-                pose = try_pose
+            try:
+                pose = LimelightPose(entry)
+                poses.append(pose)
+            except AttributeError:
+                pass
+
+        def data_value(l: LimelightPose) -> float:
+            # TODO: better heuristic
+            # Prevent division by 0
+            if l.avg_tag_distance == 0:
+                return 0
+
+            return l.tag_count / (2 * l.avg_tag_distance)
+
+        pose = max(poses, key=data_value)
 
         if pose is not None:
-            entry = pose[1]
-            pose = pose[0]
-            x = pose[0]
-            y = pose[1]
-            _z = pose[2]
-            _roll = pose[3]
-            _pitch = pose[4]
-            yaw = pose[5]
-            latency = pose[6]
-            tag_count = pose[7]
-            _tag_span = pose[8]
-            _avg_tag_distance = pose[9]
-            _avg_tag_area = pose[10]
-            last_change = 0
-            timestamp = entry.getLastChange() + latency
-            # TODO: have cutoff for avg_tag_distance
-            if tag_count > 0:
-                pose2d = Pose2d(x, y, Rotation2d(yaw))
+            # TODO: have cutoff for avg_tag_distance for accuracies sake
+            if pose.tag_count > 0:
+                # Create pose 2d from given pose
+                pose2d = Pose2d(pose.x, pose.y, Rotation2d(pose.yaw))
 
-                # TODO: is timestamp the right timestamp
-                self.odometry.addVisionMeasurement(pose2d, timestamp)
+                self.odometry.addVisionMeasurement(pose2d, pose.time())
 
     def drive(
         self,
