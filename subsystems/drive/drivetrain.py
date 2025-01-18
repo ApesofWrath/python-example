@@ -1,10 +1,9 @@
 # standard python imports
 import random
 
-from subsystems.drive.limelight_pose import LimelightPose
-
 # project imports
 from subsystems.drive.swervemodule import SwerveModule
+from subsystems.drive.limelight_pose import LimelightPose
 from constants import Drive as constants
 
 # wpi imports
@@ -26,7 +25,7 @@ from pathplannerlib.controller import PPHolonomicDriveController
 from pathplannerlib.config import RobotConfig, PIDConstants
 from wpilib import DriverStation
 
-
+# TODO: https://v6.docs.ctr-electronics.com/en/stable/docs/tuner/tuner-swerve/
 class Drivetrain(commands2.Subsystem):
     """
     Represents a swerve drive style drivetrain.
