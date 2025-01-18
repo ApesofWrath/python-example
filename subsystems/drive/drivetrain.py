@@ -124,21 +124,18 @@ class Drivetrain(commands2.Subsystem):
         # Get all poses from limelights
         for table in self.limelight_tables:
             entry = self.nt.getTable(table).getEntry("botpose_orb_wpired")
+            stddev_entry = self.nt.getTable(table).getEntry("stddevs")
             try:
-                pose = LimelightPose(entry)
+                pose = LimelightPose(entry, stddev_entry)
                 poses.append(pose)
             except AttributeError:
                 pass
 
         if len(poses) > 0:
-            # TODO: use all LLs at once instead of finding a single pose
-            pose = max(poses, key=lambda limelight_pose: limelight_pose.tag_count / (2 * limelight_pose.avg_tag_distance)
-                       if limelight_pose.avg_tag_distance != 0 else 0)
-            # TODO: have cutoff for avg_tag_distance for accuracies sake
-            if pose.tag_count > 0:
-                # Create pose 2d from given pose
-                pose2d = Pose2d(pose.x, pose.y, Rotation2d(pose.yaw))
-                self.odometry.addVisionMeasurement(pose2d, pose.time())
+            for pose in poses:
+                if pose.tag_count > 0:
+                    pose2d = Pose2d(pose.x, pose.y, Rotation2d(pose.yaw))
+                    self.odometry.addVisionMeasurement(pose2d, pose.time(), pose.covariance())
 
     def drive(
         self,
