@@ -92,7 +92,7 @@ class Drivetrain(commands2.Subsystem):
         smst_topic = self.nt.getStructArrayTopic("/SwerveStatesTarget", SwerveModuleState)
         self.smst_pub = smst_topic.publish()
 
-        self.limelight_tables = ["limelight"]
+        self.limelight_tables = ["limelight-three","limelight-gee"]
 
         # Configure the AutoBuilder last
         AutoBuilder.configure(
