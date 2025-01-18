@@ -35,24 +35,24 @@ class Spinner(commands2.PIDSubsystem):
         slot0Config.k_v = constants.motorPID["v"]
         self.motor.configurator.apply(motor_cfg)
 
-        self.states = Enum("States", ["SLOW", "FAST"])  # type: ignore
-        self.state = self.states.SLOW
+        self.states = Enum("States", ["ON", "OFF"])  # type: ignore
+        self.state = self.states.OFF
 
     def setState(self, state) -> None:
         self.state = state
 
-    def slow(self) -> commands2.Command:
-        return cmd.runOnce(lambda: self.setState(self.states.SLOW))
+    def on(self) -> commands2.Command:
+        return cmd.runOnce(lambda: self.setState(self.states.ON))
 
-    def fast(self) -> commands2.Command:
-        return cmd.runOnce(lambda: self.setState(self.states.FAST))
+    def off(self) -> commands2.Command:
+        return cmd.runOnce(lambda: self.setState(self.states.OFF))
 
     def periodic(self) -> None:
         super().periodic()
         match self.state:
-            case self.states.SLOW:
+            case self.states.ON:
                 turn_request = controls.VelocityVoltage(3).with_slot(0)
-            case self.states.FAST:
-                turn_request = controls.VelocityVoltage(20).with_slot(0)
+            case self.states.OFF:
+                turn_request = controls.VelocityVoltage(0).with_slot(0)
         self.motor.set_control(turn_request)
         SmartDashboard.putNumber("spinner", self.motor.get_position()._value)
