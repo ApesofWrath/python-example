@@ -119,6 +119,7 @@ class Drivetrain(commands2.Subsystem):
             entry.setDoubleArray([orientation.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0], 0)
 
     def insert_limelight_measurement(self) -> None:
+        # TODO: confirm on LL interface that MT2 is being used
         poses: list[LimelightPose] = []
         # Get all poses from limelights
         for table in self.limelight_tables:
@@ -129,24 +130,14 @@ class Drivetrain(commands2.Subsystem):
             except AttributeError:
                 pass
 
-        def data_value(limelight_pose: LimelightPose) -> float:
-            # TODO: better heuristic
-            # Prevent division by 0
-            if limelight_pose.avg_tag_distance == 0:
-                return 0
-
-            return limelight_pose.tag_count / (2 * limelight_pose.avg_tag_distance)
-
-        pose = None
         if len(poses) > 0:
-            pose = max(poses, key=data_value)
-
-        if pose is not None:
+            # TODO: use all LLs at once instead of finding a single pose
+            pose = max(poses, key=lambda limelight_pose: limelight_pose.tag_count / (2 * limelight_pose.avg_tag_distance)
+                       if limelight_pose.avg_tag_distance != 0 else 0)
             # TODO: have cutoff for avg_tag_distance for accuracies sake
             if pose.tag_count > 0:
                 # Create pose 2d from given pose
                 pose2d = Pose2d(pose.x, pose.y, Rotation2d(pose.yaw))
-
                 self.odometry.addVisionMeasurement(pose2d, pose.time())
 
     def drive(
