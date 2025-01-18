@@ -28,7 +28,7 @@ class LimelightPose:
         if pose is None:
             raise AttributeError("Double Array not found as entry value")
         stddevs = stddev_entry.getDoubleArray(None)
-        if stddevs is none:
+        if stddevs is None:
             raise AttributeError("TODO: fill in")
         self.x = pose[0]
         self.y = pose[1]
