@@ -1,8 +1,6 @@
 # project imports
-import subsystems.drive.drivetrain
 import constants
-from subsystems import turntable
-from subsystems import spinner
+from subsystems import Drivetrain, Turntable, Spinner
 
 # wpi imports
 import wpimath
@@ -23,9 +21,9 @@ class RobotContainer:
     def __init__(self, isReal: bool = True) -> None:
         """The container for the robot. Contains subsystems, OI devices, and commands."""
         # The robot's subsystems
-        self.robotDrive = subsystems.drive.drivetrain.Drivetrain(isReal=isReal)
-        self.turntable = turntable.Turntable()
-        self.spinner = spinner.Spinner()
+        self.robotDrive = Drivetrain(isReal=isReal)
+        self.turntable = Turntable()
+        self.spinner = Spinner()
 
         # The robot's commands
         NamedCommands.registerCommand("spinner.slow", self.spinner.slow())
