@@ -82,8 +82,8 @@ class RobotContainer:
         )
         self.driverController.x().onTrue(self.turntable.turndeg(90))
         self.driverController.y().onTrue(self.turntable.turnto(0))
-        self.driverController.leftBumper().onTrue(self.spinner.slow())
-        self.driverController.rightBumper().onTrue(self.spinner.fast())
+        self.driverController.leftBumper().onTrue(self.spinner.on())
+        self.driverController.rightBumper().onTrue(self.spinner.off())
 
     def getAutonomousCommand(self) -> commands2.Command:
         """
