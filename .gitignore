@@ -1,8 +1,5 @@
 .venv/
 *.pyc
-tests/ctre_sim
-/ctre_sim
-/ctre_sim
 
 # IDES
 .vscode/*
