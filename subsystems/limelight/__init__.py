@@ -4,7 +4,7 @@ from phoenix6.hardware import Pigeon2
 from wpimath import units
 from wpimath.geometry import Rotation2d, Pose2d
 
-import constants
+from constants import Limelight as constants
 from subsystems.limelight.limelight_pose import LimelightPose
 from subsystems.drivetrain import CommandSwerveDrivetrain as Drivetrain
 

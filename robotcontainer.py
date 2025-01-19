@@ -50,7 +50,7 @@ class RobotContainer:
             swerve.requests.FieldCentric()
             .with_deadband(constants.Global.max_speed * 0.1)
             .with_rotational_deadband(
-                constants.Global._max_angular_rate * 0.1
+                constants.Global.max_angular_rate * 0.1
             )  # Add a 10% deadband
             .with_drive_request_type(
                 swerve.SwerveModule.DriveRequestType.OPEN_LOOP_VOLTAGE

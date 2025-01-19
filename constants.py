@@ -14,6 +14,9 @@ def makeCommand(func):
 
     return cmdFn
 
+class Limelight:
+    kGyroId = 20
+
 class Turntable:
     # motor ID as set in the firmware
     driveMotorId = 13
