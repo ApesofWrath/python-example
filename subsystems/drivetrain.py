@@ -1,6 +1,10 @@
 from commands2 import Command, Subsystem
 from commands2.sysid import SysIdRoutine
 import math
+
+from pathplannerlib.auto import AutoBuilder
+from pathplannerlib.config import PIDConstants, RobotConfig
+from pathplannerlib.controller import PPHolonomicDriveController
 from phoenix6 import SignalLogger, swerve, units, utils
 from typing import Callable, overload
 from wpilib import DriverStation, Notifier, RobotController
@@ -20,6 +24,32 @@ class CommandSwerveDrivetrain(Subsystem, swerve.SwerveDrivetrain):
     """Blue alliance sees forward as 0 degrees (toward red alliance wall)"""
     _RED_ALLIANCE_PERSPECTIVE_ROTATION = Rotation2d.fromDegrees(180)
     """Red alliance sees forward as 180 degrees (toward blue alliance wall)"""
+
+    # from https://github.com/CrossTheRoadElec/Phoenix6-Examples/blob/68e3df4bb509a8e4c35d584173d340519dac7863/python/SwerveWithPathPlanner/subsystems/command_swerve_drivetrain.py#L242
+    def _configure_auto_builder(self):
+        config = RobotConfig.fromGUISettings()
+        AutoBuilder.configure(
+            lambda: self.get_state().pose,   # Supplier of current robot pose
+            self.reset_pose,                 # Consumer for seeding pose against auto
+            lambda: self.get_state().speeds, # Supplier of current robot speeds
+            # Consumer of ChassisSpeeds and feedforwards to drive the robot
+            lambda speeds, feedforwards: self.set_control(
+                self._apply_robot_speeds
+                .with_speeds(speeds)
+                .with_wheel_force_feedforwards_x(feedforwards.robotRelativeForcesXNewtons)
+                .with_wheel_force_feedforwards_y(feedforwards.robotRelativeForcesYNewtons)
+            ),
+            PPHolonomicDriveController(
+                # PID constants for translation
+                PIDConstants(10.0, 0.0, 0.0),
+                # PID constants for rotation
+                PIDConstants(7.0, 0.0, 0.0)
+            ),
+            config,
+            # Assume the path needs to be flipped for Red vs Blue, this is normally the case
+            lambda: (DriverStation.getAlliance() or DriverStation.Alliance.kBlue) == DriverStation.Alliance.kRed,
+            self # Subsystem for requirements
+        )
 
     @overload
     def __init__(
@@ -232,6 +262,8 @@ class CommandSwerveDrivetrain(Subsystem, swerve.SwerveDrivetrain):
 
         if utils.is_simulation():
             self._start_sim_thread()
+        self._apply_robot_speeds = swerve.requests.ApplyRobotSpeeds()
+        self._configure_auto_builder()
 
     def apply_request(
         self, request: Callable[[], swerve.requests.SwerveRequest]
