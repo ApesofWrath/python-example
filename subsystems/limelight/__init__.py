@@ -1,6 +1,7 @@
 import commands2
 import ntcore
 from phoenix6.hardware import Pigeon2
+from wpimath import units
 from wpimath.geometry import Rotation2d, Pose2d
 
 import constants
@@ -44,7 +45,9 @@ class Limelight(commands2.Subsystem):
                 self.drivetrain.add_vision_measurement(
                     pose2d,
                     # .time() returns milliseconds but .addVisionMeasurement requires seconds
-                    pose.time() * 1000.0,
+                    # Epochs are both FPGA, no conversion needed
+                    units.millisecondsToSeconds(pose.time()),
+                    # pose covariance is in meters
                     pose.covariance()
                 )
 

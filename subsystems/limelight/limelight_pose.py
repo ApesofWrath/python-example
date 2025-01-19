@@ -49,9 +49,8 @@ class LimelightPose:
     def time(self):
         """
         Gets the time the limelight pose was measured.
-        :return: time in milliseconds
+        :return: time in milliseconds epoch is FPGA
         """""
-        # TODO: is timestamp the right timestamp
         return self.update_time * 1000.0 - self.latency
 
     def covariance(self) -> tuple[float, float, float]:
