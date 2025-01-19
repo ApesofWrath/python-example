@@ -1,30 +1,27 @@
 # standard python imports
 import random
 
-# project imports
-from subsystems.drive.swervemodule import SwerveModule
-from subsystems.drive.limelight_pose import LimelightPose
-from constants import Drive as constants
-from constants import unit
-
-# wpi imports
-from wpilib import SmartDashboard, Field2d
-from wpimath import estimator,units
-import wpimath.geometry
-from wpimath.geometry import Rotation2d, Pose2d, Twist2d, Translation2d
-import wpimath.kinematics
-from wpimath.kinematics import SwerveModuleState, ChassisSpeeds
 import commands2
 import ntcore
-
-# vendor imports
-from phoenix6.hardware.pigeon2 import Pigeon2
-
+import wpimath.geometry
+import wpimath.kinematics
 # auton imports
 from pathplannerlib.auto import AutoBuilder
-from pathplannerlib.controller import PPHolonomicDriveController
 from pathplannerlib.config import RobotConfig, PIDConstants
+from pathplannerlib.controller import PPHolonomicDriveController
+# vendor imports
+from phoenix6.hardware.pigeon2 import Pigeon2
 from wpilib import DriverStation
+# wpi imports
+from wpilib import SmartDashboard, Field2d
+from wpimath import estimator
+from wpimath.geometry import Rotation2d, Pose2d, Twist2d
+from wpimath.kinematics import SwerveModuleState, ChassisSpeeds
+
+from constants import Drive as constants
+# project imports
+from subsystems.drive.swervemodule import SwerveModule
+
 
 # TODO: https://v6.docs.ctr-electronics.com/en/stable/docs/tuner/tuner-swerve/
 class Drivetrain(commands2.Subsystem):
@@ -112,31 +109,6 @@ class Drivetrain(commands2.Subsystem):
             == DriverStation.Alliance.kRed,  # Supplier to control path flipping based on alliance color
             self,  # Reference to this subsystem to set requirements
         )
-
-    def update_nt_orientation(self, orientation: Rotation2d) -> None:
-        # TODO: doesn't update velocities or pitch/roll
-        # SET Robot Orientation and angular velocities in degrees and degrees per second[yaw,yawrate,pitch,pitchrate,roll,rollrate]
-        for table in self.limelight_tables:
-            entry = self.nt.getTable(table).getEntry("robot_orientation_set")
-            entry.setDoubleArray([orientation.degrees(), 0.0, 0.0, 0.0, 0.0, 0.0], 0)
-
-    def insert_limelight_measurement(self) -> None:
-        # TODO: confirm on LL interface that MT2 is being used
-        poses: list[LimelightPose] = []
-        # Get all poses from limelights
-        for table in self.limelight_tables:
-            entry = self.nt.getTable(table).getEntry("botpose_orb_wpired")
-            stddev_entry = self.nt.getTable(table).getEntry("stddevs")
-            try:
-                pose = LimelightPose(entry, stddev_entry)
-                poses.append(pose)
-            except AttributeError:
-                pass
-
-        for pose in poses:
-            if pose.tag_count > 0:
-                pose2d = Pose2d(pose.x, pose.y, Rotation2d(pose.yaw))
-                self.odometry.addVisionMeasurement(pose2d, pose.time() * 1000.0, pose.covariance())
 
     def drive(
         self,
