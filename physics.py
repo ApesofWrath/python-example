@@ -1,6 +1,6 @@
 # project imports
 from robot import MyRobot
-from constants import Drivetrain as constants
+from constants import Drive as constants
 from constants import unit as unit
 
 # wpi imports
