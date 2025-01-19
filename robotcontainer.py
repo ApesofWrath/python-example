@@ -1,9 +1,6 @@
 # project imports
 import constants
-from subsystems import drivetrain
-from subsystems import turntable
-from subsystems import spinner
-from telemetry import Telemetry
+import subsystems
 
 # commands imports
 import commands2
@@ -15,9 +12,10 @@ from commands2.sysid import SysIdRoutine
 from wpilib import SmartDashboard
 import wpimath
 from wpimath.geometry import Rotation2d
-from wpimath.units import rotationsToRadians
 from phoenix6 import swerve
 from pathplannerlib.auto import AutoBuilder, NamedCommands
+
+from telemetry import Telemetry
 
 
 class RobotContainer:
@@ -29,16 +27,17 @@ class RobotContainer:
 
     """
 
-    def __init__(self, isReal: bool = True) -> None:
+    def __init__(self) -> None:
         """The container for the robot. Contains subsystems, OI devices, and commands."""
         # The robot's subsystems
         self.robotDrive = constants.TunerConstants.create_drivetrain()
-        self.turntable = turntable.Turntable()
-        self.spinner = spinner.Spinner()
+        self.turntable = subsystems.Turntable()
+        self.spinner = subsystems.Spinner()
+        self.limelight = subsystems.Limelight(self.robotDrive)
 
         # The robot's commands
-        NamedCommands.registerCommand("spinner.slow", self.spinner.slow())
-        NamedCommands.registerCommand("spinner.fast", self.spinner.fast())
+        NamedCommands.registerCommand("spinner.off", self.spinner.off())
+        NamedCommands.registerCommand("spinner.on", self.spinner.on())
 
         # The driver's controller
         self.driverController = commands2.button.CommandXboxController(constants.Global.kDriverControllerPort)

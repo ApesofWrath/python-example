@@ -24,7 +24,7 @@ class MyRobot(commands2.TimedCommandRobot):
 
         # Instantiate our RobotContainer. This will perform all our button bindings,
         # and put our autonomous chooser on the dashboard.
-        self.container = robotcontainer.RobotContainer(isReal=self.isReal())
+        self.container = robotcontainer.RobotContainer()
 
     def disabledInit(self) -> None:
         """This function is called once each time the robot enters Disabled mode."""
