@@ -6,7 +6,7 @@ from wpimath.geometry import Rotation2d, Pose2d
 
 import constants
 from subsystems.limelight.limelight_pose import LimelightPose
-from subsystems import Drivetrain
+from subsystems.drivetrain import CommandSwerveDrivetrain as Drivetrain
 
 class Limelight(commands2.Subsystem):
     def __init__(self, drive: Drivetrain):

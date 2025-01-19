@@ -1,6 +1,9 @@
 # project imports
 import constants
-import subsystems
+from subsystems.drivetrain import CommandSwerveDrivetrain as Drivetrain
+from subsystems.limelight import Limelight
+from subsystems.spinner import Spinner
+from subsystems.turntable import Turntable
 
 # commands imports
 import commands2
@@ -31,9 +34,9 @@ class RobotContainer:
         """The container for the robot. Contains subsystems, OI devices, and commands."""
         # The robot's subsystems
         self.robotDrive = constants.TunerConstants.create_drivetrain()
-        self.turntable = subsystems.Turntable()
-        self.spinner = subsystems.Spinner()
-        self.limelight = subsystems.Limelight(self.robotDrive)
+        self.turntable = Turntable()
+        self.spinner = Spinner()
+        self.limelight = Limelight(self.robotDrive)
 
         # The robot's commands
         NamedCommands.registerCommand("spinner.off", self.spinner.off())
