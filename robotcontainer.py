@@ -85,8 +85,8 @@ class RobotContainer:
             )
         )
 
-        self.driverController.povUp().whileTrue(self.robotDrive.apply_request(lambda: swerve.requests.SwerveDriveBrake()))
-        self.driverController.povDown().whileTrue(
+        (self.driverController.leftTrigger() | self.driverController.rightTrigger()).whileTrue(self.robotDrive.apply_request(lambda: swerve.requests.SwerveDriveBrake()))
+        (self.driverController.leftBumper() | self.driverController.rightBumper()).whileTrue(
             self.robotDrive.apply_request(
                 lambda: swerve.requests.PointWheelsAt().with_module_direction(
                     Rotation2d(-self.driverController.getLeftY(), -self.driverController.getLeftX())
@@ -94,23 +94,23 @@ class RobotContainer:
             )
         )
 
-        # Run SysId routines when holding back/start and X/Y.
+        # Run SysId routines when holding back and face buttons.
         # Note that each routine should be run exactly once in a single log.
-        (self.driverController.back() & self.driverController.y()).whileTrue(
+        (self.driverController.back() & self.driverController.a()).whileTrue(
             self.robotDrive.sys_id_dynamic(SysIdRoutine.Direction.kForward)
         )
-        (self.driverController.back() & self.driverController.x()).whileTrue(
+        (self.driverController.back() & self.driverController.b()).whileTrue(
             self.robotDrive.sys_id_dynamic(SysIdRoutine.Direction.kReverse)
         )
-        (self.driverController.start() & self.driverController.y()).whileTrue(
+        (self.driverController.back() & self.driverController.x()).whileTrue(
             self.robotDrive.sys_id_quasistatic(SysIdRoutine.Direction.kForward)
         )
-        (self.driverController.start() & self.driverController.x()).whileTrue(
+        (self.driverController.back() & self.driverController.y()).whileTrue(
             self.robotDrive.sys_id_quasistatic(SysIdRoutine.Direction.kReverse)
         )
 
-        # reset the field-centric heading on left bumper press
-        self.driverController.leftBumper().onTrue(
+         # reset the field-centric heading on start press
+        self.driverController.start().onTrue(
             self.robotDrive.runOnce(lambda: self.robotDrive.seed_field_centric())
         )
 
@@ -124,8 +124,8 @@ class RobotContainer:
         self.driverController.b().onTrue(self.turntable.freespin(-2)).onFalse(self.turntable.freespin(0))
         self.driverController.x().onTrue(self.turntable.turndeg(90))
         self.driverController.y().onTrue(self.turntable.turnto(0))
-        self.driverController.leftBumper().onTrue(self.spinner.on())
-        self.driverController.rightBumper().onTrue(self.spinner.off())
+        self.driverController.povUp().onTrue(self.spinner.on())
+        self.driverController.povDown().onTrue(self.spinner.off())
 
     def getAutonomousCommand(self) -> commands2.Command:
         """
