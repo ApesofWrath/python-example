@@ -47,9 +47,9 @@ class LimelightPose:
         self.stddev_yaw = stddevs[11]
 
     def time(self):
-        # TODO: Units
+        # TODO: Units - timestamp in int microseconds,latency in milliseconds 
         # TODO: is timestamp the right timestamp
-        return self.update_time - self.latency
+        return self.update_time * 10.0 * 10.0 * 10.0 - self.latency
 
     def covariance(self):
         return (self.stddev_x, self.stddev_y, self.stddev_yaw)

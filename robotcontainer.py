@@ -28,8 +28,8 @@ class RobotContainer:
         self.spinner = spinner.Spinner()
 
         # The robot's commands
-        NamedCommands.registerCommand("spinner.slow", self.spinner.slow())
-        NamedCommands.registerCommand("spinner.fast", self.spinner.fast())
+        NamedCommands.registerCommand("spinner.on", self.spinner.on())
+        NamedCommands.registerCommand("spinner.off", self.spinner.off())
 
         # The driver's controller
         self.driverController = commands2.button.CommandXboxController(

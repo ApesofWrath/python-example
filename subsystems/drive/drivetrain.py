@@ -5,12 +5,13 @@ import random
 from subsystems.drive.swervemodule import SwerveModule
 from subsystems.drive.limelight_pose import LimelightPose
 from constants import Drive as constants
+from constants import unit
 
 # wpi imports
 from wpilib import SmartDashboard, Field2d
-from wpimath import estimator
+from wpimath import estimator,units
 import wpimath.geometry
-from wpimath.geometry import Rotation2d, Pose2d, Twist2d
+from wpimath.geometry import Rotation2d, Pose2d, Twist2d, Translation2d
 import wpimath.kinematics
 from wpimath.kinematics import SwerveModuleState, ChassisSpeeds
 import commands2
@@ -67,7 +68,7 @@ class Drivetrain(commands2.Subsystem):
             self.backRightLocation,
         )
 
-        self.gyro.set_yaw(0)
+        self.gyro.set_yaw(-50)
 
         self.odometry = estimator.SwerveDrive4PoseEstimator(
             self.kinematics,
@@ -82,6 +83,7 @@ class Drivetrain(commands2.Subsystem):
         )
 
         self.field = Field2d()
+
         SmartDashboard.putData("odo_raw", self.field)
 
         self.nt = ntcore.NetworkTableInstance.getDefault()
@@ -131,11 +133,10 @@ class Drivetrain(commands2.Subsystem):
             except AttributeError:
                 pass
 
-        if len(poses) > 0:
-            for pose in poses:
-                if pose.tag_count > 0:
-                    pose2d = Pose2d(pose.x, pose.y, Rotation2d(pose.yaw))
-                    self.odometry.addVisionMeasurement(pose2d, pose.time(), pose.covariance())
+        for pose in poses:
+            if pose.tag_count > 0:
+                pose2d = Pose2d(pose.x, pose.y, Rotation2d(pose.yaw))
+                self.odometry.addVisionMeasurement(pose2d, pose.time() * 1000.0, pose.covariance())
 
     def drive(
         self,
@@ -211,6 +212,8 @@ class Drivetrain(commands2.Subsystem):
 
         self.update_nt_orientation(rotation2d)
         self.insert_limelight_measurement()
+        SmartDashboard.putNumber("x", self.odometry.getEstimatedPosition().x_feet)
+        SmartDashboard.putNumber("y", self.odometry.getEstimatedPosition().y_feet)
         SmartDashboard.putNumber("yaw", (rotation2d.radians()))
 
         self.field.setRobotPose(self.getPose())
