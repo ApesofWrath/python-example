@@ -20,7 +20,7 @@ class Limelight(commands2.Subsystem):
         """Updates the network tables of every limelight with robot orientation data from the IMU"""
         # TODO: doesn't update velocities (see angular velocity stuff)
         # SET Robot Orientation and angular velocities in degrees and degrees per second[yaw,yawrate,pitch,pitchrate,roll,rollrate]
-        rotation_list = [self.gyro.get_yaw().value, 0.0, self.gyro.get_pitch().value, 0.0, self.gyro.get_roll(), 0.0]
+        rotation_list = [self.gyro.get_yaw().value_as_double, 0.0, self.gyro.get_pitch().value_as_double, 0.0, self.gyro.get_roll().value_as_double, 0.0]
         for table in self.limelight_tables:
             entry = self.nt.getTable(table).getEntry("robot_orientation_set")
             # Time of 0 is equivalent to the current instant

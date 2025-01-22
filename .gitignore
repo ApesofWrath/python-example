@@ -4,3 +4,5 @@
 # IDES
 .vscode/*
 .idea/*
+tests/logs/*
+ctre_sim/*.dat
