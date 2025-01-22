@@ -3,6 +3,7 @@ import ntcore
 from phoenix6.hardware import Pigeon2
 from wpimath import units
 from wpimath.geometry import Rotation2d, Pose2d
+from wpilib import SmartDashboard
 
 from constants import Limelight as constants
 from subsystems.limelight.limelight_pose import LimelightPose
@@ -20,7 +21,7 @@ class Limelight(commands2.Subsystem):
         """Updates the network tables of every limelight with robot orientation data from the IMU"""
         # TODO: doesn't update velocities (see angular velocity stuff)
         # SET Robot Orientation and angular velocities in degrees and degrees per second[yaw,yawrate,pitch,pitchrate,roll,rollrate]
-        rotation_list = [self.gyro.get_yaw().value_as_double, 0.0, self.gyro.get_pitch().value_as_double, 0.0, self.gyro.get_roll().value_as_double, 0.0]
+        rotation_list = [self.gyro.get_yaw().value_as_double%360, 0.0, 0.0, 0.0, 0.0, 0.0]
         for table in self.limelight_tables:
             entry = self.nt.getTable(table).getEntry("robot_orientation_set")
             # Time of 0 is equivalent to the current instant
@@ -54,3 +55,4 @@ class Limelight(commands2.Subsystem):
     def periodic(self) -> None:
         self.update_nt_orientation()
         self.insert_limelight_measurements()
+        SmartDashboard.putNumber("gyro", self.gyro.get_yaw().value%360)

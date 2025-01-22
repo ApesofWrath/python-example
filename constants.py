@@ -148,7 +148,7 @@ class TunerConstants:
     _invert_left_side = False
     _invert_right_side = True
 
-    _pigeon_id = 1
+    _pigeon_id = 20
 
     # These are only used for simulation
     _steer_inertia: units.kilogram_square_meter = 0.01
