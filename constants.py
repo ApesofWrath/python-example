@@ -45,7 +45,6 @@ class Drive:
         * unit.inch
     )
 
-
 class Limelight:
     kGyroId = 20
 
@@ -54,7 +53,6 @@ class Turntable:
     driveMotorId = 13
     # PIDv values for motor speed controll
     motorPID = {"p": 0.01, "i": 0, "d": 0, "v": 0.12}
-
 
 class Spinner:
     # motor ID as set in the firmware
@@ -74,9 +72,9 @@ class TunerConstants:
     # output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
     _steer_gains = (
         configs.Slot0Configs()
-        .with_k_p(100)
+        .with_k_p(40)
         .with_k_i(0)
-        .with_k_d(0.5)
+        .with_k_d(0)
         .with_k_s(0.1)
         .with_k_v(2.66)
         .with_k_a(0)
@@ -115,7 +113,12 @@ class TunerConstants:
 
     # Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
     # Some configs will be overwritten; check the `with_*_initial_configs()` API documentation.
-    _drive_initial_configs = configs.TalonFXConfiguration()
+    _drive_initial_configs = configs.TalonFXConfiguration().with_current_limits(
+        configs.CurrentLimitsConfigs()
+        # Swerve azimuth does not require much torque output, so we can set a relatively low
+        # stator current limit to help avoid brownouts without impacting performance.
+        .with_stator_current_limit(60).with_stator_current_limit_enable(True)
+    )
     _steer_initial_configs = configs.TalonFXConfiguration().with_current_limits(
         configs.CurrentLimitsConfigs()
         # Swerve azimuth does not require much torque output, so we can set a relatively low
