@@ -12,17 +12,24 @@ from subsystems.drivetrain import CommandSwerveDrivetrain as Drivetrain
 class Limelight(commands2.Subsystem):
     def __init__(self, drive: Drivetrain):
         super().__init__()
-        self.limelight_tables = ["limelight-three", "limelight-gee"]
-        self.gyro = Pigeon2(constants.kGyroId)
         self.drivetrain = drive
         self.nt = ntcore.NetworkTableInstance.getDefault()
+        self.gyro = Pigeon2(constants.kGyroId)
+
+        if not SmartDashboard.containsKey("AprilTagRobotIsFacing"):
+            SmartDashboard.putNumber("AprilTagRobotIsFacing",0)
+
+        userInputNumber = SmartDashboard.getNumber("AprilTagRobotIsFacing") - 1
+
+        if len(constants.kAprilTagAnglesByID) > userInputNumber >= 0 and userInputNumber:
+            self.gyro.set_yaw(constants.kAprilTagAnglesByID[userInputNumber])
 
     def update_nt_orientation(self) -> None:
         """Updates the network tables of every limelight with robot orientation data from the IMU"""
         # TODO: doesn't update velocities (see angular velocity stuff)
         # SET Robot Orientation and angular velocities in degrees and degrees per second[yaw,yawrate,pitch,pitchrate,roll,rollrate]
         rotation_list = [self.gyro.get_yaw().value_as_double%360, 0.0, 0.0, 0.0, 0.0, 0.0]
-        for table in self.limelight_tables:
+        for table in constants.kLimelightHostnames:
             entry = self.nt.getTable(table).getEntry("robot_orientation_set")
             # Time of 0 is equivalent to the current instant
             entry.setDoubleArray(rotation_list, 0)
@@ -31,7 +38,7 @@ class Limelight(commands2.Subsystem):
         """Gets all poses from the limelights and gives them to the odometry"""
         poses: list[LimelightPose] = []
         # Get all poses from limelights
-        for table in self.limelight_tables:
+        for table in constants.kLimelightHostnames:
             entry = self.nt.getTable(table).getEntry("botpose_orb_wpired")
             stddev_entry = self.nt.getTable(table).getEntry("stddevs")
             try:

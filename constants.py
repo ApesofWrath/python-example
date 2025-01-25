@@ -47,6 +47,21 @@ class Drive:
 
 class Limelight:
     kGyroId = 20
+    kLimelightHostnames = ["limelight-three", "limelight-gee"]
+    kAprilTagAnglesByID = [ # Just the red side
+        126, # Angle of tag id 1
+        234, # Angle of tag id 2
+        270, # Angle of tag id 3
+        0, # Etc
+        0,
+        300,
+        0,
+        60,
+        120,
+        180,
+        240,
+        54
+	]
 
 class Turntable:
     # motor ID as set in the firmware
