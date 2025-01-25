@@ -3,35 +3,42 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5108706225680932,
-        "y": 6.0
+        "x": 5.3575255102040815,
+        "y": 5.461383928571429
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5108706225680963,
-        "y": 6.0
+        "x": 6.163392857142858,
+        "y": 6.655261479591836
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "test"
     },
     {
       "anchor": {
-        "x": 2.9278453307393,
-        "y": 6.0
+        "x": 1.932589285714286,
+        "y": 5.774776785714286
       },
       "prevControl": {
-        "x": 2.355933852140078,
-        "y": 6.00108219844358
+        "x": 2.014668367346939,
+        "y": 6.0359375
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "ground coral 1"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "ground pickup (coral)",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -42,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 174.1605076884827
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -119.99999999999999
   },
   "useDefaultConstraints": true
 }
