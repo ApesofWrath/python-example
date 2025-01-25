@@ -15,15 +15,7 @@ class Limelight(commands2.Subsystem):
         self.drivetrain = drive
         self.nt = ntcore.NetworkTableInstance.getDefault()
         self.gyro = Pigeon2(constants.kGyroId)
-
-        if not SmartDashboard.containsKey("AprilTagRobotIsFacing"):
-            SmartDashboard.putNumber("AprilTagRobotIsFacing",0)
-
-        # TODO: make it read this and set yaw at enable time instead of init
-        userInputNumber = SmartDashboard.getNumber("AprilTagRobotIsFacing",0) - 1
-
-        if len(constants.kAprilTagAnglesByID) > userInputNumber >= 0 and userInputNumber:
-            self.gyro.set_yaw(constants.kAprilTagAnglesByID[userInputNumber])
+        self.gyro.set_yaw(constants.kStartYaw)
 
     def update_nt_orientation(self) -> None:
         """Updates the network tables of every limelight with robot orientation data from the IMU"""
