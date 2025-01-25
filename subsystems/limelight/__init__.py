@@ -19,7 +19,8 @@ class Limelight(commands2.Subsystem):
         if not SmartDashboard.containsKey("AprilTagRobotIsFacing"):
             SmartDashboard.putNumber("AprilTagRobotIsFacing",0)
 
-        userInputNumber = SmartDashboard.getNumber("AprilTagRobotIsFacing") - 1
+        # TODO: make it read this and set yaw at enable time instead of init
+        userInputNumber = SmartDashboard.getNumber("AprilTagRobotIsFacing",0) - 1
 
         if len(constants.kAprilTagAnglesByID) > userInputNumber >= 0 and userInputNumber:
             self.gyro.set_yaw(constants.kAprilTagAnglesByID[userInputNumber])
