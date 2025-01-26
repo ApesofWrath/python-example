@@ -7,6 +7,7 @@ class LimelightPose:
     """Class for keeping track of a limelight pose from a nttables entry with attributes."""
 
     entry: NetworkTableEntry
+    # TODO: annotate with wpimath.units instead of floats
     x: float
     y: float
     z: float

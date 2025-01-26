@@ -28,6 +28,7 @@ class Limelight(commands2.Subsystem):
             entry.setDoubleArray(rotation_list, 0)
 
     def insert_limelight_measurements(self) -> None:
+        # TODO: rewrite with FP
         """Gets all poses from the limelights and gives them to the odometry"""
         poses: list[LimelightPose] = []
         # Get all poses from limelights
@@ -42,9 +43,8 @@ class Limelight(commands2.Subsystem):
 
         for pose in poses:
             if pose.tag_count > 0:
-                pose2d = Pose2d(pose.x, pose.y, Rotation2d(pose.yaw))
                 self.drivetrain.add_vision_measurement(
-                    pose2d,
+                    Pose2d(pose.x, pose.y, Rotation2d(units.degreesToRadians(pose.yaw))),
                     # .time() returns milliseconds but .addVisionMeasurement requires seconds
                     # Epochs are both FPGA, no conversion needed
                     units.millisecondsToSeconds(pose.time()),
