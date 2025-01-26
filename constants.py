@@ -47,7 +47,7 @@ class Drive:
 
 class Limelight:
     kGyroId = 20
-    kLimelightHostnames = [ "limelight-fntorng", "limelight-bckorng", "limelight-bckred" ]# "limelight-fntred",
+    kLimelightHostnames = [ "limelight-fntorng", "limelight-bckorng", "limelight-bckred", "limelight-other" ]
     kStartYaw = [ # All the IDs of the AprilTags on the red side of the field
         0, # NOT an april tag! Placeholder.
         126, # Angle of tag id 1
