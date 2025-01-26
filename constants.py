@@ -1,7 +1,7 @@
 import math
 
 from phoenix6 import CANBus, configs, hardware, signals, swerve, units
-from wpimath.units import inchesToMeters, radiansToRotations, rotationsToRadians
+from wpimath.units import inchesToMeters, degreesToRotations, rotationsToRadians
 from subsystems.drivetrain import CommandSwerveDrivetrain
 from pint import UnitRegistry
 import commands2.cmd as cmd
@@ -47,7 +47,7 @@ class Drive:
 
 class Limelight:
     kGyroId = 20
-    kLimelightHostnames = ["limelight-three", "limelight-gee"]
+    kLimelightHostnames = [ "limelight-fntorng", "limelight-bckorng", "limelight-bckred" ]# "limelight-fntred",
     kStartYaw = [ # All the IDs of the AprilTags on the red side of the field
         0, # NOT an april tag! Placeholder.
         126, # Angle of tag id 1
@@ -209,7 +209,7 @@ class TunerConstants:
     _front_left_drive_motor_id = 3
     _front_left_steer_motor_id = 4
     _front_left_encoder_id = 10
-    _front_left_encoder_offset: units.rotation = radiansToRotations(-0.439)
+    _front_left_encoder_offset: units.rotation = degreesToRotations(180-203.82)
     _front_left_steer_motor_inverted = True
     _front_left_encoder_inverted = False
 
@@ -220,7 +220,7 @@ class TunerConstants:
     _front_right_drive_motor_id = 7
     _front_right_steer_motor_id = 8
     _front_right_encoder_id = 12
-    _front_right_encoder_offset: units.rotation = radiansToRotations(-1.592)
+    _front_right_encoder_offset: units.rotation = degreesToRotations(-262.79)
     _front_right_steer_motor_inverted = True
     _front_right_encoder_inverted = False
 
@@ -231,7 +231,7 @@ class TunerConstants:
     _back_left_drive_motor_id = 1
     _back_left_steer_motor_id = 2
     _back_left_encoder_id = 9
-    _back_left_encoder_offset: units.rotation = radiansToRotations(-2.180)
+    _back_left_encoder_offset: units.rotation = degreesToRotations(235.99)
     _back_left_steer_motor_inverted = True
     _back_left_encoder_inverted = False
 
@@ -242,7 +242,7 @@ class TunerConstants:
     _back_right_drive_motor_id = 5
     _back_right_steer_motor_id = 6
     _back_right_encoder_id = 11
-    _back_right_encoder_offset: units.rotation = radiansToRotations(3.073)
+    _back_right_encoder_offset: units.rotation = degreesToRotations(180-241.46)
     _back_right_steer_motor_inverted = True
     _back_right_encoder_inverted = False
 
@@ -317,6 +317,6 @@ class TunerConstants:
 class Global:
     # dashboard port used by the driver controller
     kDriverControllerPort = 0
-    # TODO: remove redundancy
+    # TODO: remove redundancy, these are already in TunerConstants
     max_speed = TunerConstants.speed_at_12_volts # desired top speed
     max_angular_rate = rotationsToRadians(0.75)  # 3/4 of a rotation per second max angular velocity
