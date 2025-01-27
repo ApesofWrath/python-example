@@ -26,7 +26,7 @@ class Limelight(commands2.Subsystem):
             if RobotState.isDisabled():
                 # TODO: doesn't update velocities (see angular velocity stuff)
                 # SET Robot Orientation and angular velocities in degrees and degrees per second[yaw,yawrate,pitch,pitchrate,roll,rollrate]
-                rotation_list = [self.gyro.get_yaw().value_as_double%360, 0.0, 0.0, 0.0, 0.0, 0.0]
+                rotation_list = [self.gyro.get_yaw().value_as_double%360, 0.0, 0.0, 0.0, 0.0, 0.0] # https://www.chiefdelphi.com/t/limelight-puts-field-pose-backwards-ll3g/468570
                 nttable.getEntry("robot_orientation_set").setDoubleArray(rotation_list, 0) # Time of 0 is equivalent to the current instant
             elif RobotState.isEnabled():
                 self.seedingDone = True
@@ -38,7 +38,7 @@ class Limelight(commands2.Subsystem):
         poses: list[LimelightPose] = []
         # Get all poses from limelights
         for table in constants.kLimelightHostnames:
-            entry = self.nt.getTable(table).getEntry("botpose_orb_wpired")
+            entry = self.nt.getTable(table).getEntry("botpose_orb_wpiblue")
             stddev_entry = self.nt.getTable(table).getEntry("stddevs")
             try:
                 pose = LimelightPose(entry, stddev_entry)
