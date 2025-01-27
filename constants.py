@@ -47,7 +47,7 @@ class Drive:
 
 class Limelight:
     kGyroId = 20
-    kLimelightHostnames = [ "limelight-fntorng", "limelight-bckorng", "limelight-bckred", "limelight-other" ]
+    kLimelightHostnames = [ "limelight-jerry", "limelight-wwdkd", "limelight-jonkler", "limelight-moist" ]
     kStartYaw = [ # All the IDs of the AprilTags on the red side of the field
         0, # NOT an april tag! Placeholder.
         126, # Angle of tag id 1
@@ -62,7 +62,7 @@ class Limelight:
         180,
         240,
         54
-	][1] # ID of the desired tag, or 0 if you don't want an initial start yaw
+	][0] # ID of the desired tag, or 0 if you don't want an initial start yaw
 
 class Turntable:
     # motor ID as set in the firmware
