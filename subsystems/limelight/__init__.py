@@ -16,7 +16,7 @@ class Limelight(commands2.Subsystem):
         self.drivetrain = drive
         self.nt = ntcore.NetworkTableInstance.getDefault()
         self.gyro = Pigeon2(constants.kGyroId)
-        self.gyro.set_yaw(constants.kStartYaw)
+        self.gyro.set_yaw(0)
         self.seedingDone = False
 
     def update_nt_orientation(self) -> None:
@@ -26,7 +26,7 @@ class Limelight(commands2.Subsystem):
             if RobotState.isDisabled():
                 # TODO: doesn't update velocities (see angular velocity stuff)
                 # SET Robot Orientation and angular velocities in degrees and degrees per second[yaw,yawrate,pitch,pitchrate,roll,rollrate]
-                rotation_list = [self.gyro.get_yaw().value_as_double%360, 0.0, 0.0, 0.0, 0.0, 0.0] # https://www.chiefdelphi.com/t/limelight-puts-field-pose-backwards-ll3g/468570
+                rotation_list = [self.gyro.get_yaw().value_as_double%360, 0.0, 0.0, 0.0, 0.0, 0.0]
                 nttable.getEntry("robot_orientation_set").setDoubleArray(rotation_list, 0) # Time of 0 is equivalent to the current instant
             elif RobotState.isEnabled():
                 self.seedingDone = True
@@ -47,7 +47,7 @@ class Limelight(commands2.Subsystem):
                 pass
 
         for pose in poses:
-            if pose.tag_count > 0:
+            if pose.tag_count > 0 and self.gyro.get_angular_velocity_z_world().value < 80:
                 self.drivetrain.add_vision_measurement(
                     Pose2d(pose.x, pose.y, Rotation2d(units.degreesToRadians(pose.yaw))),
                     # .time() returns milliseconds but .addVisionMeasurement requires seconds

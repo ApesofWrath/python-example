@@ -114,7 +114,7 @@ class RobotContainer:
 
          # reset the field-centric heading on start press
         self.driverController.start().onTrue(
-            self.robotDrive.runOnce(lambda: self.robotDrive.seed_field_centric())
+            self.limelight.runOnce(lambda: self.limelight.gyro.set_yaw(0))
         )
 
         self.logger = Telemetry(constants.Global.max_speed)
