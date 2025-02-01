@@ -47,7 +47,7 @@ class Drive:
 
 class Limelight:
     kGyroId = 20
-    kLimelightHostnames = [ "limelight-wwdkd", "limelight-jonkler", "limelight-moist" ]
+    kLimelightHostnames = [ "limelight-wwdkd", "limelight-jonkler", "limelight-moist", "limelight-jerry" ]
 
 class Turntable:
     # motor ID as set in the firmware
@@ -305,3 +305,4 @@ class Global:
     # TODO: remove redundancy, these are already in TunerConstants
     max_speed = TunerConstants.speed_at_12_volts # desired top speed
     max_angular_rate = rotationsToRadians(0.75)  # 3/4 of a rotation per second max angular velocity
+    canivore = "0A58A9B5463847532020204B17130DFF"

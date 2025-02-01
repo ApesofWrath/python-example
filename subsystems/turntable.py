@@ -1,5 +1,5 @@
 # project imports
-from constants import Turntable as constants
+import constants
 from constants import makeCommand as makeCommand
 
 # wpi imports
@@ -16,22 +16,23 @@ class Turntable(commands2.PIDSubsystem):
     def __init__(self) -> None:
         super().__init__(
             wpimath.controller.PIDController(
-                constants.motorPID["p"],
-                constants.motorPID["i"],
-                constants.motorPID["d"],
+                constants.Turntable.motorPID["p"],
+                constants.Turntable.motorPID["i"],
+                constants.Turntable.motorPID["d"],
             )
         )
 
         self.motor = TalonFX(
-            constants.driveMotorId
+            constants.Turntable.driveMotorId,
+            constants.Global.canivore
         )  # https://api.ctr-electronics.com/phoenix6/release/python/autoapi/phoenix6/hardware/core/core_talon_fx/index.html#phoenix6.hardware.core.core_talon_fx.CoreTalonFX
 
         motor_cfg = configs.TalonFXConfiguration()
         slot0Config = motor_cfg.slot0
-        slot0Config.k_p = constants.motorPID["p"]
-        slot0Config.k_i = constants.motorPID["i"]
-        slot0Config.k_d = constants.motorPID["d"]
-        slot0Config.k_v = constants.motorPID["v"]
+        slot0Config.k_p = constants.Turntable.motorPID["p"]
+        slot0Config.k_i = constants.Turntable.motorPID["i"]
+        slot0Config.k_d = constants.Turntable.motorPID["d"]
+        slot0Config.k_v = constants.Turntable.motorPID["v"]
         self.motor.configurator.apply(motor_cfg)
 
     @makeCommand

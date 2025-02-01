@@ -1,5 +1,5 @@
 # standard imports
-from constants import Spinner as constants
+import constants
 from enum import Enum
 
 # wpi imports
@@ -17,22 +17,23 @@ class Spinner(commands2.PIDSubsystem):
     def __init__(self) -> None:
         super().__init__(
             wpimath.controller.PIDController(
-                constants.motorPID["p"],
-                constants.motorPID["i"],
-                constants.motorPID["d"],
+                constants.Spinner.motorPID["p"],
+                constants.Spinner.motorPID["i"],
+                constants.Spinner.motorPID["d"],
             )
         )
 
         self.motor = TalonFX(
-            constants.driveMotorId
+            constants.Spinner.driveMotorId,
+            constants.Global.canivore
         )  # https://api.ctr-electronics.com/phoenix6/release/python/autoapi/phoenix6/hardware/core/core_talon_fx/index.html#phoenix6.hardware.core.core_talon_fx.CoreTalonFX
 
         motor_cfg = configs.TalonFXConfiguration()
         slot0Config = motor_cfg.slot0
-        slot0Config.k_p = constants.motorPID["p"]
-        slot0Config.k_i = constants.motorPID["i"]
-        slot0Config.k_d = constants.motorPID["d"]
-        slot0Config.k_v = constants.motorPID["v"]
+        slot0Config.k_p = constants.Spinner.motorPID["p"]
+        slot0Config.k_i = constants.Spinner.motorPID["i"]
+        slot0Config.k_d = constants.Spinner.motorPID["d"]
+        slot0Config.k_v = constants.Spinner.motorPID["v"]
         self.motor.configurator.apply(motor_cfg)
 
         self.states = Enum("States", ["ON", "OFF"])  # type: ignore
