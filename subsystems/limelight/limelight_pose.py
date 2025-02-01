@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from ntcore import NetworkTableEntry
-
+from wpimath.geometry import Rotation2d, Pose2d
+from wpimath import units
 
 @dataclass(init=False, eq=True)
 class LimelightPose:
@@ -46,6 +47,8 @@ class LimelightPose:
         self.stddev_x = stddevs[6]
         self.stddev_y = stddevs[7]
         self.stddev_yaw = stddevs[11]
+        if self.x == self.y == self.z:
+            raise NotImplementedError("Nope, not adding this")
 
     def time(self):
         """
@@ -56,3 +59,6 @@ class LimelightPose:
 
     def covariance(self) -> tuple[float, float, float]:
         return self.stddev_x, self.stddev_y, self.stddev_yaw
+
+    def as_pose(self) -> Pose2d:
+        return Pose2d(self.x, self.y, Rotation2d(units.degreesToRadians(self.yaw)))

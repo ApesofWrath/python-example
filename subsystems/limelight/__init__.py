@@ -3,7 +3,7 @@ import ntcore
 from phoenix6.hardware import Pigeon2
 from wpimath import units
 from wpimath.geometry import Rotation2d, Pose2d
-from wpilib import SmartDashboard
+from wpilib import SmartDashboard, Field2d
 from wpilib import RobotState
 
 from constants import Limelight as constants
@@ -17,6 +17,9 @@ class Limelight(commands2.Subsystem):
         self.nt = ntcore.NetworkTableInstance.getDefault()
         self.gyro = Pigeon2(constants.kGyroId)
         self.gyro.set_yaw(0)
+        self.fields = {name: Field2d() for name in constants.kLimelightHostnames}
+        for name in self.fields.keys():
+            SmartDashboard.putData("limelight_" + name, self.fields[name])
         self.seedingDone = False
 
     def update_nt_orientation(self) -> None:
@@ -42,9 +45,12 @@ class Limelight(commands2.Subsystem):
             stddev_entry = self.nt.getTable(table).getEntry("stddevs")
             try:
                 pose = LimelightPose(entry, stddev_entry)
+                self.fields[table].setRobotPose(pose.as_pose())
                 poses.append(pose)
             except AttributeError:
                 pass
+            except NotImplementedError:
+                self.fields[table].setRobotPose(Pose2d(-1.0, -1.0, Rotation2d(units.degreesToRadians(180))))
 
         for pose in poses:
             if pose.tag_count > 0 and self.gyro.get_angular_velocity_z_world().value < 80:
