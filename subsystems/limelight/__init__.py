@@ -27,6 +27,7 @@ class Limelight(commands2.Subsystem):
         for table in constants.kLimelightHostnames:
             nttable = self.nt.getTable(table)
             if RobotState.isDisabled():
+                nttable.getEntry("imumode_set").setDouble(1)
                 # TODO: doesn't update velocities (see angular velocity stuff)
                 # SET Robot Orientation and angular velocities in degrees and degrees per second[yaw,yawrate,pitch,pitchrate,roll,rollrate]
                 rotation_list = [self.gyro.get_yaw().value_as_double%360, 0.0, 0.0, 0.0, 0.0, 0.0]
