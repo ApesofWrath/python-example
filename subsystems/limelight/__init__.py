@@ -17,6 +17,7 @@ TODO:
 - test with one
 - mess with covariance
 - test methods to find the best LL
+- set yaw depending on team
 '''
 
 class Limelight(commands2.Subsystem):

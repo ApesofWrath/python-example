@@ -20,6 +20,8 @@ from pathplannerlib.auto import AutoBuilder, NamedCommands
 
 from telemetry import Telemetry
 
+# TODO: stop wheel drift
+# TODO: slight rotation when driving
 
 class RobotContainer:
     """
@@ -76,26 +78,24 @@ class RobotContainer:
             self.robotDrive.apply_request(
                 lambda: (
                     self.drive.with_velocity_x(
-                        -self.driverController.getLeftY() * constants.Global.max_speed
+                        -self.driverController.getLeftY()
+                        * constants.Global.max_speed
+                        * max((self.driverController.leftBumper() | self.driverController.rightBumper()).negate().getAsBoolean(),constants.Global.break_speed_mul)
                     )  # Drive forward with negative Y (forward)
                     .with_velocity_y(
-                        -self.driverController.getLeftX() * constants.Global.max_speed
+                        -self.driverController.getLeftX()
+                        * constants.Global.max_speed
+                        * max((self.driverController.leftBumper() | self.driverController.rightBumper()).negate().getAsBoolean(),constants.Global.break_speed_mul)
                     )  # Drive left with negative X (left)
                     .with_rotational_rate(
-                        -self.driverController.getRightX() * constants.Global.max_angular_rate
-                    )  # Drive counterclockwise with negative X (left)
+                        self.driverController.getRightX()
+                        * constants.Global.max_angular_rate
+                    )  # Drive counterclockwise with X (right)
                 )
             )
         )
 
         (self.driverController.leftTrigger() | self.driverController.rightTrigger()).whileTrue(self.robotDrive.apply_request(lambda: swerve.requests.SwerveDriveBrake()))
-        (self.driverController.leftBumper() | self.driverController.rightBumper()).whileTrue(
-            self.robotDrive.apply_request(
-                lambda: swerve.requests.PointWheelsAt().with_module_direction(
-                    Rotation2d(-self.driverController.getLeftY(), -self.driverController.getLeftX())
-                )
-            )
-        )
 
         # Run SysId routines when holding back and face buttons.
         # Note that each routine should be run exactly once in a single log.
@@ -112,7 +112,7 @@ class RobotContainer:
             self.robotDrive.sys_id_quasistatic(SysIdRoutine.Direction.kReverse)
         )
 
-         # reset the field-centric heading on start press
+        # reset the field-centric heading on start press
         self.driverController.start().onTrue(
             self.limelight.runOnce(lambda: self.limelight.gyro.set_yaw(0))
         )
