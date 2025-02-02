@@ -12,6 +12,13 @@ from subsystems.drivetrain import CommandSwerveDrivetrain as Drivetrain
 
 from pipe import Pipe, map, filter
 
+'''
+TODO:
+- test with one
+- mess with covariance
+- test methods to find the best LL
+'''
+
 class Limelight(commands2.Subsystem):
     def __init__(self, drive: Drivetrain):
         super().__init__()
@@ -47,7 +54,7 @@ class Limelight(commands2.Subsystem):
 
     def insert_limelight_measurements(self) -> None:
         # Use pipe library to chain maps together without nasty arg nesting
-        poses = list( # pipelines are lazy, we need to acess the value to make it do the pipeline
+        list( # pipelines are lazy, we need to acess the value to make it do the pipeline
             constants.kLimelightHostnames | # the limelight hostnames
             map(lambda hostname: (self.nt.getTable(hostname), hostname)) | # tuple of the hostname and nttables table
             map(lambda table:( # tuple of hostname and LLP
@@ -63,20 +70,18 @@ class Limelight(commands2.Subsystem):
                 Pose2d(-1,-1,Rotation2d(units.degreesToRadians(180)))
             )) | # update all the individual limelight fields
             map(lambda pose_tuple: pose_tuple[0]) | # drop the hostname, it was just for updating the fields dict
-            filter(lambda pose: not pose.invalid) | # drop invalid poses
-            filter(lambda _: self.gyro.get_angular_velocity_z_world().value < 80) # criteria for using a pose
-        )
-
-        for pose in poses:
-            self.drivetrain.add_vision_measurement(
-                Pose2d(pose.x, pose.y, Rotation2d(units.degreesToRadians(pose.yaw))),
-                # .time() returns milliseconds but .addVisionMeasurement requires seconds
-                # Epochs are both FPGA, no conversion needed
-                units.millisecondsToSeconds(pose.time()),
-                # pose covariance is in meters
-                pose.covariance()
+            filter(lambda pose: not pose.invalid and self.gyro.get_angular_velocity_z_world().value < 80) | # drop invalid poses
+            self.runOn(lambda pose:
+                self.drivetrain.add_vision_measurement(
+                    Pose2d(pose.x, pose.y, Rotation2d(units.degreesToRadians(pose.yaw))),
+                    # .time() returns milliseconds but .addVisionMeasurement requires seconds
+                    # Epochs are both FPGA, no conversion needed
+                    units.millisecondsToSeconds(pose.time()),
+                    # pose covariance is in meters
+                    pose.covariance()
+                )
             )
-
+        )
 
     def periodic(self) -> None:
         if not self.seedingDone:
