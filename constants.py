@@ -48,7 +48,7 @@ class Drive:
 
 class Limelight:
     kGyroId = 20
-    kLimelightHostnames = [ "limelight-wwdkd", "limelight-jonkler", "limelight-moist", "limelight-jerry" ]
+    kLimelightHostnames = ["limelight-moist"] #[ "limelight-wwdkd", "limelight-jonkler", "limelight-moist", "limelight-jerry" ]
 
 class Turntable:
     # motor ID as set in the firmware
@@ -228,7 +228,7 @@ class TunerConstants:
     _back_right_drive_motor_id = 5
     _back_right_steer_motor_id = 6
     _back_right_encoder_id = 11
-    _back_right_encoder_offset: units.rotation = degreesToRotations(180-241.46)
+    _back_right_encoder_offset: units.rotation = degreesToRotations(180-241.46-8.7)
     _back_right_steer_motor_inverted = True
     _back_right_encoder_inverted = False
 

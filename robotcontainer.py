@@ -20,9 +20,6 @@ from pathplannerlib.auto import AutoBuilder, NamedCommands
 
 from telemetry import Telemetry
 
-# TODO: stop wheel drift
-# TODO: slight rotation when driving
-
 class RobotContainer:
     """
     This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -82,10 +79,10 @@ class RobotContainer:
                         * constants.Global.max_speed
                         * max((self.driverController.leftBumper() | self.driverController.rightBumper()).negate().getAsBoolean(),constants.Global.break_speed_mul)
                     )  # Drive forward with negative Y (forward)
-                    .with_velocity_y(
-                        -self.driverController.getLeftX()
-                        * constants.Global.max_speed
-                        * max((self.driverController.leftBumper() | self.driverController.rightBumper()).negate().getAsBoolean(),constants.Global.break_speed_mul)
+                    .with_velocity_y(0
+                        #-self.driverController.getLeftX()
+                        #* constants.Global.max_speed
+                        #* max((self.driverController.leftBumper() | self.driverController.rightBumper()).negate().getAsBoolean(),constants.Global.break_speed_mul)
                     )  # Drive left with negative X (left)
                     .with_rotational_rate(
                         self.driverController.getRightX()
