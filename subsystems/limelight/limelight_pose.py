@@ -24,14 +24,16 @@ class LimelightPose:
     stddev_x: float
     stddev_y: float
     stddev_yaw: float
+    invalid: bool
 
     def __init__(self, entry: NetworkTableEntry, stddev_entry: NetworkTableEntry):
         pose = entry.getDoubleArray(None)
-        if pose is None:
-            raise AttributeError("Double Array not found as entry value")
         stddevs = stddev_entry.getDoubleArray(None)
-        if stddevs is None:
-            raise AttributeError("TODO: fill in")
+
+        if pose is None or stddevs is None:
+            self.invalid = True
+            return
+
         self.x = pose[0]
         self.y = pose[1]
         self.z = pose[2]
@@ -47,8 +49,7 @@ class LimelightPose:
         self.stddev_x = stddevs[6]
         self.stddev_y = stddevs[7]
         self.stddev_yaw = stddevs[11]
-        if self.x == self.y == self.z:
-            raise NotImplementedError("Nope, not adding this")
+        self.invalid = self.x == self.y == self.z or self.tag_count <= 0
 
     def time(self):
         """

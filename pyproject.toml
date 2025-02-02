@@ -34,5 +34,6 @@ robotpy_extras = [
 
 # Other pip packages to install
 requires = [
-	"pint"
+	"pint",
+	"pipe"
 ]

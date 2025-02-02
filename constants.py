@@ -7,6 +7,7 @@ from pint import UnitRegistry
 import commands2.cmd as cmd
 
 # real-world unit types
+# TODO: use wpimath.units for all of it
 unit = UnitRegistry()
 
 

@@ -10,6 +10,8 @@ from constants import Limelight as constants
 from subsystems.limelight.limelight_pose import LimelightPose
 from subsystems.drivetrain import CommandSwerveDrivetrain as Drivetrain
 
+from pipe import Pipe, map, filter
+
 class Limelight(commands2.Subsystem):
     def __init__(self, drive: Drivetrain):
         super().__init__()
@@ -36,33 +38,45 @@ class Limelight(commands2.Subsystem):
                 self.seedingDone = True
                 nttable.getEntry("imumode_set").setDouble(2)
 
+    @Pipe
+    def runOn(iterable, funct):
+        """Like map but not lazy and also return the origional value"""
+        for item in iterable:
+            funct(item)
+            yield item
+
     def insert_limelight_measurements(self) -> None:
-        # TODO: rewrite with FP
-        """Gets all poses from the limelights and gives them to the odometry"""
-        poses: list[LimelightPose] = []
-        # Get all poses from limelights
-        for table in constants.kLimelightHostnames:
-            entry = self.nt.getTable(table).getEntry("botpose_orb_wpiblue")
-            stddev_entry = self.nt.getTable(table).getEntry("stddevs")
-            try:
-                pose = LimelightPose(entry, stddev_entry)
-                self.fields[table].setRobotPose(pose.as_pose())
-                poses.append(pose)
-            except AttributeError:
-                pass
-            except NotImplementedError:
-                self.fields[table].setRobotPose(Pose2d(-1.0, -1.0, Rotation2d(units.degreesToRadians(180))))
+        # Use pipe library to chain maps together without nasty arg nesting
+        poses = list( # pipelines are lazy, we need to acess the value to make it do the pipeline
+            constants.kLimelightHostnames | # the limelight hostnames
+            map(lambda hostname: (self.nt.getTable(hostname), hostname)) | # tuple of the hostname and nttables table
+            map(lambda table:( # tuple of hostname and LLP
+                LimelightPose(
+                    table[0].getEntry("botpose_orb_wpiblue"),
+                    table[0].getEntry("stddevs")
+                ),
+                table[1]
+            )) |
+            self.runOn(lambda pose: self.fields[pose[1]].setRobotPose(
+                pose[0].as_pose()
+                if not pose[0].invalid else
+                Pose2d(-1,-1,Rotation2d(units.degreesToRadians(180)))
+            )) | # update all the individual limelight fields
+            map(lambda pose_tuple: pose_tuple[0]) | # drop the hostname, it was just for updating the fields dict
+            filter(lambda pose: not pose.invalid) | # drop invalid poses
+            filter(lambda _: self.gyro.get_angular_velocity_z_world().value < 80) # criteria for using a pose
+        )
 
         for pose in poses:
-            if pose.tag_count > 0 and self.gyro.get_angular_velocity_z_world().value < 80:
-                self.drivetrain.add_vision_measurement(
-                    Pose2d(pose.x, pose.y, Rotation2d(units.degreesToRadians(pose.yaw))),
-                    # .time() returns milliseconds but .addVisionMeasurement requires seconds
-                    # Epochs are both FPGA, no conversion needed
-                    units.millisecondsToSeconds(pose.time()),
-                    # pose covariance is in meters
-                    pose.covariance()
-                )
+            self.drivetrain.add_vision_measurement(
+                Pose2d(pose.x, pose.y, Rotation2d(units.degreesToRadians(pose.yaw))),
+                # .time() returns milliseconds but .addVisionMeasurement requires seconds
+                # Epochs are both FPGA, no conversion needed
+                units.millisecondsToSeconds(pose.time()),
+                # pose covariance is in meters
+                pose.covariance()
+            )
+
 
     def periodic(self) -> None:
         if not self.seedingDone:
