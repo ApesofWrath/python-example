@@ -27,7 +27,8 @@ class LimelightPose:
     invalid: bool
 
     def __init__(self, entry: NetworkTableEntry, stddev_entry: NetworkTableEntry):
-        pose = entry.getDoubleArray(None)
+        ts_value = entry.getAtomic()
+        pose = ts_value.value
         stddevs = stddev_entry.getDoubleArray(None)
 
         if pose is None or stddevs is None:
@@ -41,11 +42,11 @@ class LimelightPose:
         self.pitch = pose[4]
         self.yaw = pose[5]
         self.latency = pose[6]
+        self.timestamp = ts_value.time
         self.tag_count = pose[7]
         self.tag_span = pose[8]
         self.avg_tag_distance = pose[9]
         self.avg_tag_area = pose[10]
-        self.update_time = entry.getLastChange()
         self.stddev_x = stddevs[6]
         self.stddev_y = stddevs[7]
         self.stddev_yaw = stddevs[11]
@@ -56,7 +57,7 @@ class LimelightPose:
         Gets the time the limelight pose was measured.
         :return: time in milliseconds epoch is FPGA
         """""
-        return self.update_time * 1000.0 - self.latency
+        return (self.timestamp / 1000000.0) - (self.latency / 1000.0)
 
     def covariance(self) -> tuple[float, float, float]:
         return self.stddev_x, self.stddev_y, self.stddev_yaw

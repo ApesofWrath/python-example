@@ -1,3 +1,5 @@
+# TODO: https://github.com/SteelRidgeRobotics/2025Reefscape/blob/21dd224745dc5b56c75622affa622bdc86a033e0/subsystems/swerve.py#L359
+
 import commands2
 import ntcore
 from phoenix6.hardware import Pigeon2
@@ -14,7 +16,6 @@ from pipe import Pipe, map, filter
 
 '''
 TODO:
-- test with one
 - mess with covariance
 - test methods to find the best LL
 - set yaw depending on team
@@ -60,7 +61,7 @@ class Limelight(commands2.Subsystem):
             map(lambda hostname: (self.nt.getTable(hostname), hostname)) | # tuple of the hostname and nttables table
             map(lambda table:( # tuple of hostname and LLP
                 LimelightPose(
-                    table[0].getEntry("botpose_orb_wpiblue"),
+                    table[0].getDoubleArrayTopic("botpose_orb_wpiblue").getEntry([]),
                     table[0].getEntry("stddevs")
                 ),
                 table[1]
@@ -72,15 +73,20 @@ class Limelight(commands2.Subsystem):
             )) | # update all the individual limelight fields
             map(lambda pose_tuple: pose_tuple[0]) | # drop the hostname, it was just for updating the fields dict
             filter(lambda pose: not pose.invalid and self.gyro.get_angular_velocity_z_world().value < 80) | # drop invalid poses
+            # TODO: use pose covariance as a filter even with hardcoded covars
             self.runOn(lambda pose:
                 self.drivetrain.add_vision_measurement(
                     Pose2d(pose.x, pose.y, Rotation2d(units.degreesToRadians(pose.yaw))),
                     # .time() returns milliseconds but .addVisionMeasurement requires seconds
                     # Epochs are both FPGA, no conversion needed
-                    units.millisecondsToSeconds(pose.time()),
+                    pose.time(),
                     # pose covariance is in meters
                     pose.covariance()
+                    #(.005,.005,.001)
                 )
+            ) |
+            self.runOn(lambda pose:
+                SmartDashboard.putNumberArray("covaiance", pose.covariance())
             )
         )
 

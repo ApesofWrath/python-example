@@ -33,13 +33,13 @@ class RobotContainer:
         """The container for the robot. Contains subsystems, OI devices, and commands."""
         # The robot's subsystems
         self.robotDrive = constants.TunerConstants.create_drivetrain()
-        self.turntable = Turntable()
-        self.spinner = Spinner()
+        #self.turntable = Turntable()
+        #self.spinner = Spinner()
         self.limelight = Limelight(self.robotDrive)
 
         # The robot's commands
-        NamedCommands.registerCommand("spinner.off", self.spinner.off())
-        NamedCommands.registerCommand("spinner.on", self.spinner.on())
+        #NamedCommands.registerCommand("spinner.off", self.spinner.off())
+        #NamedCommands.registerCommand("spinner.on", self.spinner.on())
 
         # The driver's controller
         self.driverController = commands2.button.CommandXboxController(constants.Global.kDriverControllerPort)
@@ -79,10 +79,10 @@ class RobotContainer:
                         * constants.Global.max_speed
                         * max((self.driverController.leftBumper() | self.driverController.rightBumper()).negate().getAsBoolean(),constants.Global.break_speed_mul)
                     )  # Drive forward with negative Y (forward)
-                    .with_velocity_y(0
-                        #-self.driverController.getLeftX()
-                        #* constants.Global.max_speed
-                        #* max((self.driverController.leftBumper() | self.driverController.rightBumper()).negate().getAsBoolean(),constants.Global.break_speed_mul)
+                    .with_velocity_y(
+                        -self.driverController.getLeftX()
+                        * constants.Global.max_speed
+                        * max((self.driverController.leftBumper() | self.driverController.rightBumper()).negate().getAsBoolean(),constants.Global.break_speed_mul)
                     )  # Drive left with negative X (left)
                     .with_rotational_rate(
                         self.driverController.getRightX()
@@ -111,8 +111,13 @@ class RobotContainer:
 
         # reset the field-centric heading on start press
         self.driverController.start().onTrue(
+            # TODO: make a command in LL subsys to re-seed the LL gyros also
             self.limelight.runOnce(lambda: self.limelight.gyro.set_yaw(0))
         )
+        
+        self.driverController.back().onTrue(
+               self.robotDrive.apply_request(lambda: swerve.requests.PointWheelsAt().with_module_direction(Rotation2d()))
+		)
 
         self.logger = Telemetry(constants.Global.max_speed)
         self.robotDrive.register_telemetry(
@@ -120,12 +125,12 @@ class RobotContainer:
         )
 
 		# Subsystems
-        self.driverController.a().onTrue(self.turntable.freespin(2)).onFalse(self.turntable.freespin(0))
-        self.driverController.b().onTrue(self.turntable.freespin(-2)).onFalse(self.turntable.freespin(0))
-        self.driverController.x().onTrue(self.turntable.turndeg(90))
-        self.driverController.y().onTrue(self.turntable.turnto(0))
-        self.driverController.povUp().onTrue(self.spinner.on())
-        self.driverController.povDown().onTrue(self.spinner.off())
+        #self.driverController.a().onTrue(self.turntable.freespin(2)).onFalse(self.turntable.freespin(0))
+        #self.driverController.b().onTrue(self.turntable.freespin(-2)).onFalse(self.turntable.freespin(0))
+        #self.driverController.x().onTrue(self.turntable.turndeg(90))
+        #self.driverController.y().onTrue(self.turntable.turnto(0))
+        #self.driverController.povUp().onTrue(self.spinner.on())
+        #self.driverController.povDown().onTrue(self.spinner.off())
 
     def getAutonomousCommand(self) -> commands2.Command:
         """
