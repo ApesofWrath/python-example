@@ -48,7 +48,7 @@ class Drive:
 
 class Limelight:
     kGyroId = 20
-    kLimelightHostnames = ["limelight-wwdkd"] #[ "limelight-wwdkd", "limelight-jonkler", "limelight-moist", "limelight-jerry" ]
+    kLimelightHostnames = [ "limelight-wwdkd", "limelight-jonkler", "limelight-moist", "limelight-jerry" ]
 
 class Turntable:
     # motor ID as set in the firmware

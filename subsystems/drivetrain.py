@@ -11,7 +11,6 @@ from wpilib import DriverStation, Notifier, RobotController
 from wpilib.sysid import SysIdRoutineLog
 from wpimath.geometry import Rotation2d
 
-
 class CommandSwerveDrivetrain(Subsystem, swerve.SwerveDrivetrain):
     """
     Class that extends the Phoenix 6 SwerveDrivetrain class and implements
