@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.932589285714286,
-        "y": 5.774776785714286
+        "x": 7.58858418367347,
+        "y": 6.192633928571428
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.932589285714287,
-        "y": 5.774776785714286
+        "x": 5.999234693873408,
+        "y": 6.088169642862048
       },
       "isLocked": false,
-      "linkedName": "ground coral 1"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.3575255102040815,
-        "y": 5.461383928571429
+        "x": 3.1861607142815718,
+        "y": 2.3423788265355174
       },
       "prevControl": {
-        "x": 4.290497448979592,
-        "y": 7.1402742346938775
+        "x": 2.8727678571387147,
+        "y": 5.199617346938783
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "test"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -49,13 +49,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 174.1605076884827
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
