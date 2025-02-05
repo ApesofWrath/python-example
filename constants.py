@@ -1,10 +1,11 @@
 import math
 
 from phoenix6 import CANBus, configs, hardware, signals, swerve, units
-from wpimath.units import inchesToMeters, degreesToRotations, rotationsToRadians
+from wpimath.units import inchesToMeters, degreesToRotations, rotationsToRadians, degreesToRadians
 from subsystems.drivetrain import CommandSwerveDrivetrain
 from pint import UnitRegistry
 import commands2.cmd as cmd
+from wpimath.geometry import Pose2d
 
 # real-world unit types
 # TODO: use wpimath.units for all of it
@@ -49,6 +50,7 @@ class Drive:
 class Limelight:
     kGyroId = 20
     kLimelightHostnames = [ "limelight-wwdkd", "limelight-jonkler", "limelight-moist", "limelight-jerry" ]
+    kAlignmentTargets = [ Pose2d(12.3, 5.25, degreesToRadians(-60)) ]
 
 class Turntable:
     # motor ID as set in the firmware

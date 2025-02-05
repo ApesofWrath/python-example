@@ -1,11 +1,12 @@
 import commands2
 from phoenix6 import utils
 from phoenix6.hardware import Pigeon2
-from wpimath import units
-from wpimath.geometry import Rotation2d, Pose2d
 from wpilib import SmartDashboard, Field2d
+from pathplannerlib.path import PathConstraints
+from pathplannerlib.auto import AutoBuilder
 
-from constants import Limelight as constants
+import constants
+from constants import makeCommand
 from subsystems.limelight.limelight import LimelightHelpers
 from subsystems.drivetrain import CommandSwerveDrivetrain as Drivetrain
 
@@ -13,12 +14,13 @@ class Limelight(commands2.Subsystem):
     def __init__(self, drive: Drivetrain):
         super().__init__()
         self.drivetrain = drive
-        self.pigeon2 = Pigeon2(constants.kGyroId)
+        self.pigeon2 = Pigeon2(constants.Limelight.kGyroId)
         self.pigeon2.set_yaw(0)
 
-        self.fields = {name: Field2d() for name in constants.kLimelightHostnames}
-        for name in self.fields.keys():
-            SmartDashboard.putData("limelight_" + name, self.fields[name])
+        for target in constants.Limelight.kAlignmentTargets:
+            field = Field2d()
+            field.setRobotPose(target)
+            SmartDashboard.putData(f"alignTarget ({target.X()},{target.Y()})", field)
 
 	# thank you Steel Ridge/team 6343
     def insert_limelight_measurements(self, LLHostname: str) -> None:
@@ -45,11 +47,14 @@ class Limelight(commands2.Subsystem):
             self.drivetrain.set_vision_measurement_std_devs((0.7, 0.7, 9999999))
             self.drivetrain.add_vision_measurement(mega_tag2.pose, utils.fpga_to_current_time(mega_tag2.timestamp_seconds))
 
-            self.fields[LLHostname].setRobotPose(mega_tag2.pose)
-        else:
-            self.fields[LLHostname].setRobotPose(Pose2d(-1,-1,Rotation2d(units.degreesToRadians(180))))
+    def align(self) -> commands2.Command:
+        return AutoBuilder.pathfindToPose(
+            self.drivetrain.get_state().pose.nearest(constants.Limelight.kAlignmentTargets),
+            PathConstraints( 3, 3, 540, 720 ),
+            0
+		)
 
     def periodic(self) -> None:
-        for llhn in constants.kLimelightHostnames:
+        for llhn in constants.Limelight.kLimelightHostnames:
             self.insert_limelight_measurements(llhn)
         SmartDashboard.putNumber("gyro", self.pigeon2.get_yaw().value%360)

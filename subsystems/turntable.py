@@ -1,6 +1,6 @@
 # project imports
 import constants
-from constants import makeCommand as makeCommand
+from constants import makeCommand
 
 # wpi imports
 import commands2

@@ -1,6 +1,5 @@
 # project imports
 import constants
-from subsystems.drivetrain import CommandSwerveDrivetrain as Drivetrain
 from subsystems.limelight import Limelight
 from subsystems.spinner import Spinner
 from subsystems.turntable import Turntable
@@ -13,7 +12,6 @@ from commands2.sysid import SysIdRoutine
 
 # wpi imports
 from wpilib import SmartDashboard
-import wpimath
 from wpimath.geometry import Rotation2d
 from phoenix6 import swerve
 from pathplannerlib.auto import AutoBuilder, NamedCommands
@@ -92,6 +90,7 @@ class RobotContainer:
             )
         )
 
+        # break on triggers
         (self.driverController.leftTrigger() | self.driverController.rightTrigger()).whileTrue(self.robotDrive.apply_request(lambda: swerve.requests.SwerveDriveBrake()))
 
         # Run SysId routines when holding back and face buttons.
@@ -112,12 +111,16 @@ class RobotContainer:
         # reset the field-centric heading on start press
         self.driverController.start().onTrue(
             # TODO: make a command in LL subsys to re-seed the LL gyros also
-            self.limelight.runOnce(lambda: self.limelight.gyro.set_yaw(0))
+            self.limelight.runOnce(lambda: self.limelight.pigeon2.set_yaw(0))
         )
-        
+
+        # modules turn toward their zeros
         self.driverController.back().onTrue(
                self.robotDrive.apply_request(lambda: swerve.requests.PointWheelsAt().with_module_direction(Rotation2d()))
 		)
+
+        # go to the closest alignment target
+        self.driverController.povLeft().onTrue(self.limelight.align())
 
         self.logger = Telemetry(constants.Global.max_speed)
         self.robotDrive.register_telemetry(
