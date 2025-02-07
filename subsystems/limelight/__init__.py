@@ -48,10 +48,11 @@ class Limelight(commands2.Subsystem):
             self.drivetrain.add_vision_measurement(mega_tag2.pose, utils.fpga_to_current_time(mega_tag2.timestamp_seconds))
 
     def align(self) -> commands2.Command:
+        # TODO: figure out pathplanner team
+        # TODO: it goes in the exact opposite direction
         return AutoBuilder.pathfindToPose(
             self.drivetrain.get_state().pose.nearest(constants.Limelight.kAlignmentTargets),
-            PathConstraints( 3, 3, 540, 720 ),
-            0
+            PathConstraints( 3, 3, 540, 720 )
 		)
 
     def periodic(self) -> None:
