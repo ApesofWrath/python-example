@@ -1,12 +1,12 @@
 # project imports
 from robot import MyRobot
-from constants import Drive as constants
-from constants import unit as unit
+from constants import TunerConstants as constants
 
 # wpi imports
 from wpilib import DriverStation, RobotController
 import wpilib.simulation as sim
 from wpimath.system.plant import DCMotor, LinearSystemId
+from wpimath import units
 from pyfrc.physics.core import PhysicsInterface
 
 # vendor imports
@@ -32,8 +32,8 @@ class PhysicsEngine:
         # SWERVE INIT
         self.drivetrain = robot.container.robotDrive
 
-        self.drive_ratio = constants.kDriveRatio
-        self.turn_ratio = constants.kTurnRatio
+        self.drive_ratio = constants._drive_gear_ratio
+        self.turn_ratio = constants._steer_gear_ratio
 
         gearbox = DCMotor.krakenX60(1)
 
@@ -161,44 +161,16 @@ class PhysicsEngine:
             drive_fx.set_supply_voltage(RobotController.getBatteryVoltage())
             drive_motor.setInputVoltage(drive_fx.motor_voltage)
             drive_motor.update(tm_diff)
-            drive_fx.set_raw_rotor_position(
-                (
-                    drive_motor.getAngularPosition() * self.drive_ratio * unit.radian
-                ).m_as("turn")
-            )
-            drive_fx.set_rotor_velocity(
-                (
-                    drive_motor.getAngularVelocity()
-                    * self.drive_ratio
-                    * unit.radian
-                    / unit.second
-                ).m_as("turn / second")
-            )
+            drive_fx.set_raw_rotor_position(units.radiansToRotations(drive_motor.getAngularPosition() * self.drive_ratio))
+            drive_fx.set_rotor_velocity(units.radiansPerSecondToRotationsPerMinute(drive_motor.getAngularVelocity() * self.drive_ratio)*60)
 
             turn_fx.set_supply_voltage(RobotController.getBatteryVoltage())
             turn_motor.setInputVoltage(turn_fx.motor_voltage)
             turn_motor.update(tm_diff)
-            turn_encoder.set_raw_position(
-                (turn_motor.getAngularPosition() * unit.radian).m_as("turn")
-            )
-            turn_encoder.set_velocity(
-                (turn_motor.getAngularVelocity() * unit.radian / unit.second).m_as(
-                    "turn / second"
-                )
-            )
-            turn_fx.set_raw_rotor_position(
-                (turn_motor.getAngularPosition() * self.turn_ratio * unit.radian).m_as(
-                    "turn"
-                )
-            )
-            turn_fx.set_rotor_velocity(
-                (
-                    turn_motor.getAngularVelocity()
-                    * self.turn_ratio
-                    * unit.radian
-                    / unit.second
-                ).m_as("turn / second")
-            )
+            turn_encoder.set_raw_position(units.radiansToRotations(turn_motor.getAngularPosition()))
+            turn_encoder.set_velocity(units.radiansPerSecondToRotationsPerMinute(turn_motor.getAngularVelocity())*60)
+            turn_fx.set_raw_rotor_position(units.radiansToRotations(turn_motor.getAngularPosition()))
+            turn_fx.set_rotor_velocity(units.radiansPerSecondToRotationsPerMinute(turn_motor.getAngularVelocity()*self.turn_ratio)*60)
 
         self.drivetrain.gyro.sim_state.set_supply_voltage(
             RobotController.getBatteryVoltage()
@@ -210,16 +182,5 @@ class PhysicsEngine:
             motor_fx.set_supply_voltage(RobotController.getBatteryVoltage())
             motor_sim.setInputVoltage(motor_fx.motor_voltage)
             motor_sim.update(tm_diff)
-            motor_fx.set_raw_rotor_position(
-                (motor_sim.getAngularPosition() * self.drive_ratio * unit.radian).m_as(
-                    "turn"
-                )
-            )
-            motor_fx.set_rotor_velocity(
-                (
-                    motor_sim.getAngularVelocity()
-                    * self.drive_ratio
-                    * unit.radian
-                    / unit.second
-                ).m_as("turn / second")
-            )
+            motor_fx.set_raw_rotor_position(units.radiansToRotations(motor_sim.getAngularPosition() * self.drive_ratio))
+            motor_fx.set_rotor_velocity(units.radiansPerSecondToRotationsPerMinute(motor_sim.getAngularVelocity() * self.drive_ratio)*60)

@@ -110,7 +110,6 @@ class RobotContainer:
 
         # reset the field-centric heading on start press
         self.driverController.start().onTrue(
-            # TODO: make a command in LL subsys to re-seed the LL gyros also
             self.limelight.runOnce(lambda: self.limelight.pigeon2.set_yaw(0))
         )
 
