@@ -49,7 +49,7 @@ class Drive:
 
 class Limelight:
     kGyroId = 20
-    kLimelightHostnames = [ "limelight-wwdkd", "limelight-jonkler", "limelight-moist", "limelight-jerry" ]
+    kLimelightHostnames = [ "limelight-wwdkd", "limelight-jonkler", "limelight-moist" ]
     kAlignmentTargets = [ Pose2d(12.3, 5.25, degreesToRadians(-60)) ]
 
 class Turntable:
