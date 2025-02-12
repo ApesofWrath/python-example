@@ -6,10 +6,11 @@ from pathplannerlib.auto import AutoBuilder
 from pathplannerlib.config import PIDConstants, RobotConfig
 from pathplannerlib.controller import PPHolonomicDriveController
 from phoenix6 import SignalLogger, swerve, units, utils
-from typing import Callable, overload
+from typing import Callable
 from wpilib import DriverStation, Notifier, RobotController
 from wpilib.sysid import SysIdRoutineLog
 from wpimath.geometry import Rotation2d
+from constants import TunerConstants
 
 class CommandSwerveDrivetrain(Subsystem, swerve.SwerveDrivetrain):
     """
@@ -26,7 +27,6 @@ class CommandSwerveDrivetrain(Subsystem, swerve.SwerveDrivetrain):
 
     # from https://github.com/CrossTheRoadElec/Phoenix6-Examples/blob/68e3df4bb509a8e4c35d584173d340519dac7863/python/SwerveWithPathPlanner/subsystems/command_swerve_drivetrain.py#L242
     def _configure_auto_builder(self):
-        config = RobotConfig.fromGUISettings()
         AutoBuilder.configure(
             lambda: self.get_state().pose,   # Supplier of current robot pose
             self.reset_pose,                 # Consumer for seeding pose against auto
@@ -40,17 +40,16 @@ class CommandSwerveDrivetrain(Subsystem, swerve.SwerveDrivetrain):
             ),
             PPHolonomicDriveController(
                 # PID constants for translation
-                PIDConstants(10.0, 0.0, 0.0),
+                PIDConstants(TunerConstants._drive_gains.k_p, TunerConstants._drive_gains.k_i, TunerConstants._drive_gains.k_d),
                 # PID constants for rotation
-                PIDConstants(7.0, 0.0, 0.0)
+                PIDConstants(TunerConstants._steer_gains.k_p, TunerConstants._steer_gains.k_i, TunerConstants._steer_gains.k_d)
             ),
-            config,
+            RobotConfig.fromGUISettings(),
             # Assume the path needs to be flipped for Red vs Blue, this is normally the case
             lambda: (DriverStation.getAlliance() or DriverStation.Alliance.kBlue) == DriverStation.Alliance.kRed,
             self # Subsystem for requirements
         )
 
-    @overload
     def __init__(
         self,
         drive_motor_type: type,
@@ -77,101 +76,10 @@ class CommandSwerveDrivetrain(Subsystem, swerve.SwerveDrivetrain):
         :param modules:              Constants for each specific module
         :type modules:               list[swerve.SwerveModuleConstants]
         """
-        ...
-
-    @overload
-    def __init__(
-        self,
-        drive_motor_type: type,
-        steer_motor_type: type,
-        encoder_type: type,
-        drivetrain_constants: swerve.SwerveDrivetrainConstants,
-        odometry_update_frequency: units.hertz,
-        modules: list[swerve.SwerveModuleConstants],
-    ) -> None:
-        """
-        Constructs a CTRE SwerveDrivetrain using the specified constants.
-
-        This constructs the underlying hardware devices, so users should not construct
-        the devices themselves. If they need the devices, they can access them through
-        getters in the classes.
-
-        :param drive_motor_type:            Type of the drive motor
-        :type drive_motor_type:             type
-        :param steer_motor_type:            Type of the steer motor
-        :type steer_motor_type:             type
-        :param encoder_type:                Type of the azimuth encoder
-        :type encoder_type:                 type
-        :param drivetrain_constants:        Drivetrain-wide constants for the swerve drive
-        :type drivetrain_constants:         swerve.SwerveDrivetrainConstants
-        :param odometry_update_frequency:   The frequency to run the odometry loop. If
-                                            unspecified or set to 0 Hz, this is 250 Hz on
-                                            CAN FD, and 100 Hz on CAN 2.0.
-        :type odometry_update_frequency:    units.hertz
-        :param modules:                     Constants for each specific module
-        :type modules:                      list[swerve.SwerveModuleConstants]
-        """
-        ...
-
-    @overload
-    def __init__(
-        self,
-        drive_motor_type: type,
-        steer_motor_type: type,
-        encoder_type: type,
-        drivetrain_constants: swerve.SwerveDrivetrainConstants,
-        odometry_update_frequency: units.hertz,
-        odometry_standard_deviation: tuple[float, float, float],
-        vision_standard_deviation: tuple[float, float, float],
-        modules: list[swerve.SwerveModuleConstants],
-    ) -> None:
-        """
-        Constructs a CTRE SwerveDrivetrain using the specified constants.
-
-        This constructs the underlying hardware devices, so users should not construct
-        the devices themselves. If they need the devices, they can access them through
-        getters in the classes.
-
-        :param drive_motor_type:            Type of the drive motor
-        :type drive_motor_type:             type
-        :param steer_motor_type:            Type of the steer motor
-        :type steer_motor_type:             type
-        :param encoder_type:                Type of the azimuth encoder
-        :type encoder_type:                 type
-        :param drivetrain_constants:        Drivetrain-wide constants for the swerve drive
-        :type drivetrain_constants:         swerve.SwerveDrivetrainConstants
-        :param odometry_update_frequency:   The frequency to run the odometry loop. If
-                                            unspecified or set to 0 Hz, this is 250 Hz on
-                                            CAN FD, and 100 Hz on CAN 2.0.
-        :type odometry_update_frequency:    units.hertz
-        :param odometry_standard_deviation: The standard deviation for odometry calculation
-                                            in the form [x, y, theta]ᵀ, with units in meters
-                                            and radians
-        :type odometry_standard_deviation:  tuple[float, float, float]
-        :param vision_standard_deviation:   The standard deviation for vision calculation
-                                            in the form [x, y, theta]ᵀ, with units in meters
-                                            and radians
-        :type vision_standard_deviation:    tuple[float, float, float]
-        :param modules:                     Constants for each specific module
-        :type modules:                      list[swerve.SwerveModuleConstants]
-        """
-        ...
-
-    def __init__(
-        self,
-        drive_motor_type: type,
-        steer_motor_type: type,
-        encoder_type: type,
-        drivetrain_constants: swerve.SwerveDrivetrainConstants,
-        arg0=None,
-        arg1=None,
-        arg2=None,
-        arg3=None,
-    ):
         Subsystem.__init__(self)
         swerve.SwerveDrivetrain.__init__(
             self, drive_motor_type, steer_motor_type, encoder_type,
-            drivetrain_constants, arg0, arg1, arg2, arg3
+            drivetrain_constants, modules
         )
 
         self._sim_notifier: Notifier | None = None

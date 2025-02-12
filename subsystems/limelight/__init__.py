@@ -4,6 +4,7 @@ from phoenix6.hardware import Pigeon2
 from wpilib import SmartDashboard, Field2d
 from pathplannerlib.path import PathConstraints
 from pathplannerlib.auto import AutoBuilder
+from wpilib import SmartDashboard, Field2d, DriverStation
 
 import constants
 from subsystems.limelight.limelight import LimelightHelpers
@@ -14,7 +15,7 @@ class Limelight(commands2.Subsystem):
         super().__init__()
         self.drivetrain = drive
         self.pigeon2 = Pigeon2(constants.Limelight.kGyroId)
-        self.pigeon2.set_yaw(0)
+        self.pigeon2.set_yaw((DriverStation.getAlliance() == DriverStation.Alliance.kBlue) * 180)
 
         for target in constants.Limelight.kAlignmentTargets:
             field = Field2d()
@@ -49,7 +50,7 @@ class Limelight(commands2.Subsystem):
     def align(self) -> commands2.Command:
         return AutoBuilder.pathfindToPose(
             self.drivetrain.get_state().pose.nearest(constants.Limelight.kAlignmentTargets),
-            PathConstraints( 3, 3, 540, 720 )
+            PathConstraints( 0.5, 0.5, 0.1, 0.1 )
 		)
 
     def periodic(self) -> None:

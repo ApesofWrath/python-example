@@ -1,8 +1,7 @@
 import math
 
-from phoenix6 import CANBus, configs, hardware, signals, swerve, units
-from wpimath.units import inchesToMeters, degreesToRotations, rotationsToRadians, degreesToRadians
-from subsystems.drivetrain import CommandSwerveDrivetrain
+from phoenix6 import CANBus, configs, signals, swerve, units
+from wpimath.units import inchesToMeters, rotationsToRadians, degreesToRadians
 import commands2.cmd as cmd
 from wpimath.geometry import Pose2d
 
@@ -68,19 +67,15 @@ class TunerConstants:
     https://v6.docs.ctr-electronics.com/en/stable/docs/tuner/tuner-swerve/index.html
     """
 
-    _drive_gear_ratio = 6.746031746031747
-    _steer_gear_ratio = 21.428571428571427
-    _wheel_radius: units.meter = inchesToMeters(2)
-
     # Both sets of gains need to be tuned to your individual robot
 
     # The steer motor uses any SwerveModule.SteerRequestType control request with the
     # output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
     _steer_gains = (
         configs.Slot0Configs()
-        .with_k_p(40)
+        .with_k_p(100)
         .with_k_i(0)
-        .with_k_d(0)
+        .with_k_d(0.5)
         .with_k_s(0.1)
         .with_k_v(2.66)
         .with_k_a(0)
@@ -90,11 +85,11 @@ class TunerConstants:
     # output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     _drive_gains = (
         configs.Slot0Configs()
-        .with_k_p(0.01)
+        .with_k_p(0.1)
         .with_k_i(0)
         .with_k_d(0)
         .with_k_s(0)
-        .with_k_v(12.0 / (100.0 / _drive_gear_ratio))
+        .with_k_v(0.124)
     )
 
     # The closed-loop output type to use for the steer motors;
@@ -110,7 +105,7 @@ class TunerConstants:
     _steer_motor_type = swerve.SteerMotorArrangement.TALON_FX_INTEGRATED
 
     # The remote sensor feedback type to use for the steer motors;
-    # When not Pro-licensed, FusedCANcoder/SyncCANcoder automatically fall back to RemoteCANcoder
+    # When not Pro-licensed, Fused*/Sync* automatically fall back to Remote*
     _steer_feedback_type = swerve.SteerFeedbackType.FUSED_CANCODER
 
     # The stator current at which the wheels start to slip;
@@ -119,12 +114,7 @@ class TunerConstants:
 
     # Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
     # Some configs will be overwritten; check the `with_*_initial_configs()` API documentation.
-    _drive_initial_configs = configs.TalonFXConfiguration().with_current_limits(
-        configs.CurrentLimitsConfigs()
-        # Swerve azimuth does not require much torque output, so we can set a relatively low
-        # stator current limit to help avoid brownouts without impacting performance.
-        .with_stator_current_limit(60).with_stator_current_limit_enable(True)
-    )
+    _drive_initial_configs = configs.TalonFXConfiguration()
     _steer_initial_configs = configs.TalonFXConfiguration().with_current_limits(
         configs.CurrentLimitsConfigs()
         # Swerve azimuth does not require much torque output, so we can set a relatively low
@@ -146,6 +136,10 @@ class TunerConstants:
     # Every 1 rotation of the azimuth results in _couple_ratio drive motor turns;
     # This may need to be tuned to your individual robot
     _couple_ratio = 3.5714285714285716
+
+    _drive_gear_ratio = 6.746031746031747
+    _steer_gear_ratio = 21.428571428571427
+    _wheel_radius: units.meter = inchesToMeters(2)
 
     _invert_left_side = False
     _invert_right_side = True
@@ -195,7 +189,7 @@ class TunerConstants:
     _front_left_drive_motor_id = 3
     _front_left_steer_motor_id = 4
     _front_left_encoder_id = 10
-    _front_left_encoder_offset: units.rotation = degreesToRotations(180-203.82)
+    _front_left_encoder_offset: units.rotation = 0.431884765625
     _front_left_steer_motor_inverted = True
     _front_left_encoder_inverted = False
 
@@ -206,7 +200,7 @@ class TunerConstants:
     _front_right_drive_motor_id = 7
     _front_right_steer_motor_id = 8
     _front_right_encoder_id = 12
-    _front_right_encoder_offset: units.rotation = degreesToRotations(-262.79)
+    _front_right_encoder_offset: units.rotation = -0.236572265625
     _front_right_steer_motor_inverted = True
     _front_right_encoder_inverted = False
 
@@ -217,7 +211,7 @@ class TunerConstants:
     _back_left_drive_motor_id = 1
     _back_left_steer_motor_id = 2
     _back_left_encoder_id = 9
-    _back_left_encoder_offset: units.rotation = degreesToRotations(235.99)
+    _back_left_encoder_offset: units.rotation = 0.14599609375
     _back_left_steer_motor_inverted = True
     _back_left_encoder_inverted = False
 
@@ -228,7 +222,7 @@ class TunerConstants:
     _back_right_drive_motor_id = 5
     _back_right_steer_motor_id = 6
     _back_right_encoder_id = 11
-    _back_right_encoder_offset: units.rotation = degreesToRotations(180-241.46-8.7)
+    _back_right_encoder_offset: units.rotation = 0.30517578125
     _back_right_steer_motor_inverted = True
     _back_right_encoder_inverted = False
 
@@ -280,25 +274,6 @@ class TunerConstants:
         _back_right_steer_motor_inverted,
         _back_right_encoder_inverted,
     )
-
-    @classmethod
-    def create_drivetrain(clazz) -> CommandSwerveDrivetrain:
-        """
-        Creates a CommandSwerveDrivetrain instance.
-        This should only be called once in your robot program.
-        """
-        return CommandSwerveDrivetrain(
-            hardware.TalonFX,
-            hardware.TalonFX,
-            hardware.CANcoder,
-            clazz.drivetrain_constants,
-            [
-                clazz.front_left,
-                clazz.front_right,
-                clazz.back_left,
-                clazz.back_right,
-            ],
-        )
 
 class Global:
     # dashboard port used by the driver controller

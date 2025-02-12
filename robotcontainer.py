@@ -3,6 +3,7 @@ import constants
 from subsystems.limelight import Limelight
 from subsystems.spinner import Spinner
 from subsystems.turntable import Turntable
+from subsystems.drivetrain import CommandSwerveDrivetrain
 
 # commands imports
 import commands2
@@ -13,7 +14,7 @@ from commands2.sysid import SysIdRoutine
 # wpi imports
 from wpilib import SmartDashboard
 from wpimath.geometry import Rotation2d
-from phoenix6 import swerve
+from phoenix6 import swerve, hardware
 from pathplannerlib.auto import AutoBuilder, NamedCommands
 
 from telemetry import Telemetry
@@ -30,7 +31,13 @@ class RobotContainer:
     def __init__(self) -> None:
         """The container for the robot. Contains subsystems, OI devices, and commands."""
         # The robot's subsystems
-        self.robotDrive = constants.TunerConstants.create_drivetrain()
+        self.robotDrive =  CommandSwerveDrivetrain(
+            hardware.TalonFX,
+            hardware.TalonFX,
+            hardware.CANcoder,
+            constants.TunerConstants.drivetrain_constants,
+            [ constants.TunerConstants.front_left, constants.TunerConstants.front_right, constants.TunerConstants.back_left, constants.TunerConstants.back_right ],
+        )
         #self.turntable = Turntable()
         #self.spinner = Spinner()
         self.limelight = Limelight(self.robotDrive)
@@ -55,6 +62,7 @@ class RobotContainer:
         )
 
         # Configure the button bindings
+
         self.configureButtonBindings()
 
         # Build an auto chooser. This will use Commands.none() as the default option.
@@ -119,7 +127,7 @@ class RobotContainer:
 		)
 
         # go to the closest alignment target
-        self.driverController.povLeft().onTrue(self.limelight.align())
+        self.driverController.povLeft().whileTrue(self.limelight.align())
 
         self.logger = Telemetry(constants.Global.max_speed)
         self.robotDrive.register_telemetry(
