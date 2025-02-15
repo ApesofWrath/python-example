@@ -127,7 +127,7 @@ class RobotContainer:
 		)
 
         # go to the closest alignment target
-        self.driverController.povLeft().whileTrue(self.limelight.align())
+        self.driverController.povLeft().whileTrue(self.limelight.pathfind())
 
         self.logger = Telemetry(constants.Global.max_speed)
         self.robotDrive.register_telemetry(

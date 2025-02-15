@@ -47,6 +47,7 @@ class Drive:
 class Limelight:
     kGyroId = 20
     kLimelightHostnames = [ "limelight-wwdkd", "limelight-jonkler", "limelight-moist" ]
+    # TODO: create targets procedurally using tag lists
     kAlignmentTargets = [ Pose2d(12.3, 5.25, degreesToRadians(-60)) ]
 
 class Turntable:

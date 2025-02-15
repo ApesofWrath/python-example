@@ -47,11 +47,16 @@ class Limelight(commands2.Subsystem):
             self.drivetrain.set_vision_measurement_std_devs((0.7, 0.7, 9999999))
             self.drivetrain.add_vision_measurement(mega_tag2.pose, utils.fpga_to_current_time(mega_tag2.timestamp_seconds))
 
-    def align(self) -> commands2.Command:
+    def pathfind(self) -> commands2.Command:
         return AutoBuilder.pathfindToPose(
+            # TODO: manually select a side of the reef by clicky button on the directional paddle
             self.drivetrain.get_state().pose.nearest(constants.Limelight.kAlignmentTargets),
-            PathConstraints( 1, 2, 0.1, 0.1 )
+            PathConstraints( 2, 2, 0.25, 0.25 )
 		)
+    
+    def align(self) -> commands2.Command:
+        # TODO: precise PID-based alignment
+        pass
 
     def periodic(self) -> None:
         for llhn in constants.Limelight.kLimelightHostnames:
