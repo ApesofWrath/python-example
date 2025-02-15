@@ -50,6 +50,12 @@ class Limelight:
     # TODO: create targets procedurally using tag lists
     kAlignmentTargets = [ Pose2d(12.3, 5.25, degreesToRadians(-60)) ]
 
+    class precise:
+        move_p = 2
+        spin_p = 0.75
+        xy_tolerance = 0.01
+        theta_tolerance = 0.5
+
 class Turntable:
     # motor ID as set in the firmware
     driveMotorId = 13

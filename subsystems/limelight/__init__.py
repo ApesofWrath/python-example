@@ -16,7 +16,7 @@ class Limelight(commands2.Subsystem):
         self.drivetrain = drive
         self.pigeon2 = Pigeon2(constants.Limelight.kGyroId)
         self.pigeon2.set_yaw((DriverStation.getAlliance() == DriverStation.Alliance.kBlue) * 180)
-        self.delta = None
+        self.getDelta()
 
         for target in constants.Limelight.kAlignmentTargets:
             field = Field2d()
@@ -51,7 +51,7 @@ class Limelight(commands2.Subsystem):
     def pathfind(self) -> commands2.Command:
         return AutoBuilder.pathfindToPose(
             self.drivetrain.get_state().pose.nearest(constants.Limelight.kAlignmentTargets),
-            PathConstraints( 2, 2, 0.25, 0.25 )
+            PathConstraints( 2.5, 2.5, 1, 1 )
 		)
 
     def getDelta(self) -> int:
@@ -60,22 +60,19 @@ class Limelight(commands2.Subsystem):
 
     def align(self) -> commands2.Command:
         return commands2.RepeatCommand(
-            commands2.SequentialCommandGroup(
-                commands2.RunCommand(self.getDelta),
-                commands2.RunCommand(
-                    self.drivetrain.set_control(
-                        swerve.requests.FieldCentric() \
-                            .with_rotational_rate(-self.delta.dtheta / 2) \
-                            .with_velocity_y(-self.delta.dy / 2) \
-                            .with_velocity_x(-self.delta.dx / 2)
-                    )
+            commands2.RunCommand(
+                lambda: self.drivetrain.set_control(
+                    swerve.requests.FieldCentric() \
+                        .with_rotational_rate(self.delta.dtheta * constants.Limelight.precise.spin_p * (abs(self.delta.dtheta_degrees) > constants.Limelight.precise.theta_tolerance)) \
+                        .with_velocity_y(-self.delta.dy * constants.Limelight.precise.move_p * (abs(self.delta.dy) > constants.Limelight.precise.xy_tolerance)) \
+                        .with_velocity_x(-self.delta.dx * constants.Limelight.precise.move_p * (abs(self.delta.dx) > constants.Limelight.precise.xy_tolerance))
                 )
             )
-        ).until(
-            lambda: abs(self.delta.dx) < 0.01 and abs(self.delta.dy) < 0.01 and abs(self.delta.dtheta_degrees) < 1
         )
 
     def periodic(self) -> None:
         for llhn in constants.Limelight.kLimelightHostnames:
             self.insert_limelight_measurements(llhn)
+        self.getDelta()
         SmartDashboard.putNumber("gyro", self.pigeon2.get_yaw().value%360)
+        SmartDashboard.putString("alignDelta", f"({self.delta.dx:.10f},{self.delta.dy:.10f}) {self.delta.dtheta_degrees:.10f}")
