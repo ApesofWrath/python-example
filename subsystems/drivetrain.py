@@ -40,9 +40,9 @@ class CommandSwerveDrivetrain(Subsystem, swerve.SwerveDrivetrain):
             ),
             PPHolonomicDriveController(
                 # PID constants for translation
-                PIDConstants(TunerConstants._drive_gains.k_p, TunerConstants._drive_gains.k_i, TunerConstants._drive_gains.k_d),
+                PIDConstants(1),
                 # PID constants for rotation
-                PIDConstants(TunerConstants._steer_gains.k_p, TunerConstants._steer_gains.k_i, TunerConstants._steer_gains.k_d)
+                PIDConstants(1)
             ),
             RobotConfig.fromGUISettings(),
             # Assume the path needs to be flipped for Red vs Blue, this is normally the case

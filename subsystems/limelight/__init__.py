@@ -50,7 +50,7 @@ class Limelight(commands2.Subsystem):
     def align(self) -> commands2.Command:
         return AutoBuilder.pathfindToPose(
             self.drivetrain.get_state().pose.nearest(constants.Limelight.kAlignmentTargets),
-            PathConstraints( 0.5, 0.5, 0.1, 0.1 )
+            PathConstraints( 1, 2, 0.1, 0.1 )
 		)
 
     def periodic(self) -> None:
