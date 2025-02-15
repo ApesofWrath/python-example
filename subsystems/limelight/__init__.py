@@ -1,5 +1,5 @@
 import commands2
-from phoenix6 import utils
+from phoenix6 import utils, swerve
 from phoenix6.hardware import Pigeon2
 from wpilib import SmartDashboard, Field2d
 from pathplannerlib.path import PathConstraints
@@ -16,6 +16,7 @@ class Limelight(commands2.Subsystem):
         self.drivetrain = drive
         self.pigeon2 = Pigeon2(constants.Limelight.kGyroId)
         self.pigeon2.set_yaw((DriverStation.getAlliance() == DriverStation.Alliance.kBlue) * 180)
+        self.delta = None
 
         for target in constants.Limelight.kAlignmentTargets:
             field = Field2d()
@@ -49,14 +50,30 @@ class Limelight(commands2.Subsystem):
 
     def pathfind(self) -> commands2.Command:
         return AutoBuilder.pathfindToPose(
-            # TODO: manually select a side of the reef by clicky button on the directional paddle
             self.drivetrain.get_state().pose.nearest(constants.Limelight.kAlignmentTargets),
             PathConstraints( 2, 2, 0.25, 0.25 )
 		)
-    
+
+    def getDelta(self) -> int:
+        current = self.drivetrain.get_state().pose
+        self.delta = current.log(current.nearest(constants.Limelight.kAlignmentTargets))
+
     def align(self) -> commands2.Command:
-        # TODO: precise PID-based alignment
-        pass
+        return commands2.RepeatCommand(
+            commands2.SequentialCommandGroup(
+                commands2.RunCommand(self.getDelta),
+                commands2.RunCommand(
+                    self.drivetrain.set_control(
+                        swerve.requests.FieldCentric() \
+                            .with_rotational_rate(-self.delta.dtheta / 2) \
+                            .with_velocity_y(-self.delta.dy / 2) \
+                            .with_velocity_x(-self.delta.dx / 2)
+                    )
+                )
+            )
+        ).until(
+            lambda: abs(self.delta.dx) < 0.01 and abs(self.delta.dy) < 0.01 and abs(self.delta.dtheta_degrees) < 1
+        )
 
     def periodic(self) -> None:
         for llhn in constants.Limelight.kLimelightHostnames:
