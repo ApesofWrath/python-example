@@ -11,6 +11,7 @@ from wpilib import DriverStation, Notifier, RobotController
 from wpilib.sysid import SysIdRoutineLog
 from wpimath.geometry import Rotation2d
 
+
 class CommandSwerveDrivetrain(Subsystem, swerve.SwerveDrivetrain):
     """
     Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -40,9 +41,9 @@ class CommandSwerveDrivetrain(Subsystem, swerve.SwerveDrivetrain):
             ),
             PPHolonomicDriveController(
                 # PID constants for translation
-                PIDConstants(10.0, 0.0, 0.0),
+                PIDConstants(1.0, 0.0, 0.0),
                 # PID constants for rotation
-                PIDConstants(7.0, 0.0, 0.0)
+                PIDConstants(1.0, 0.0, 0.0)
             ),
             config,
             # Assume the path needs to be flipped for Red vs Blue, this is normally the case

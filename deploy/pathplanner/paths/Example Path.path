@@ -3,42 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.932589285714286,
-        "y": 5.774776785714286
+        "x": 7.5,
+        "y": 1.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.932589285714287,
-        "y": 5.774776785714286
+        "x": 7.75,
+        "y": 1.5
       },
       "isLocked": false,
-      "linkedName": "ground coral 1"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.3575255102040815,
-        "y": 5.461383928571429
+        "x": 6.0,
+        "y": 1.5
       },
       "prevControl": {
-        "x": 4.290497448979592,
-        "y": 7.1402742346938775
+        "x": 5.75,
+        "y": 1.5
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "test"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Score L1",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 0.2,
@@ -49,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 174.1605076884827
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

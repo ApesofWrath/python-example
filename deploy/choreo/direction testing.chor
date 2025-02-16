@@ -1,5 +1,5 @@
 {
- "name":"Red Choreo",
+ "name":"direction testing",
  "version":1,
  "type":"Swerve",
  "variables":{
@@ -32,8 +32,8 @@
    "val":68.0388555
   },
   "inertia":{
-   "exp":"6.883 kg m ^ 2",
-   "val":6.883
+   "exp":"6 kg m ^ 2",
+   "val":6.0
   },
   "gearing":{
    "exp":"6.5",
@@ -48,12 +48,12 @@
    "val":628.3185307179587
   },
   "tmax":{
-   "exp":"7.09 N * m",
-   "val":7.09
+   "exp":"1.2 N * m",
+   "val":1.2
   },
   "cof":{
-   "exp":"1.2",
-   "val":1.2
+   "exp":"1.5",
+   "val":1.5
   },
   "bumper":{
    "front":{
