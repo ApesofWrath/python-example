@@ -53,13 +53,13 @@ class Limelight(commands2.Subsystem):
 
     def pathfind(self) -> commands2.Command:
         return AutoBuilder.pathfindToPose(
-            self.drivetrain.get_state().pose.nearest(list(constants.Limelight.kAlignmentTargets.values())),
+            constants.Limelight.kAlignmentTargets[9],
             PathConstraints( 2.5, 2.5, 1, 1 )
 		)
 
     def getDelta(self) -> int:
         current = self.drivetrain.get_state().pose
-        self.delta = current.log(current.nearest(list(constants.Limelight.kAlignmentTargets.values())))
+        self.delta = current.log(constants.Limelight.kAlignmentTargets[9])
 
     def align(self) -> commands2.Command:
         return commands2.RepeatCommand(

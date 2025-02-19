@@ -93,6 +93,7 @@ class RobotContainer:
                     .with_rotational_rate(
                         self.driverController.getRightX()
                         * constants.Global.max_angular_rate
+                        * max((self.driverController.leftBumper() | self.driverController.rightBumper()).negate().getAsBoolean(),constants.Global.break_speed_mul)
                     )  # Drive counterclockwise with X (right)
                 )
             )
@@ -150,3 +151,4 @@ class RobotContainer:
         :returns: the command to run in autonomous
         """
         return self.autoChooser.getSelected()
+        # TODO: sometimes, attempting to correct a wrong location using two limelights at once will cause the odometry to "spiral"
