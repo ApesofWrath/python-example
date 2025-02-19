@@ -1,10 +1,13 @@
-import commands2
+import commands2, math
 from phoenix6 import utils, swerve
 from phoenix6.hardware import Pigeon2
 from wpilib import SmartDashboard, Field2d
 from pathplannerlib.path import PathConstraints
 from pathplannerlib.auto import AutoBuilder
 from wpilib import SmartDashboard, Field2d, DriverStation
+from wpimath.geometry import Pose2d, Transform2d
+from wpimath.units import degreesToRadians
+from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 
 import constants
 from subsystems.limelight.limelight import LimelightHelpers
@@ -18,10 +21,10 @@ class Limelight(commands2.Subsystem):
         self.pigeon2.set_yaw((DriverStation.getAlliance() == DriverStation.Alliance.kBlue) * 180)
         self.getDelta()
 
-        for target in constants.Limelight.kAlignmentTargets:
+        for id,target in constants.Limelight.kAlignmentTargets.items():
             field = Field2d()
             field.setRobotPose(target)
-            SmartDashboard.putData(f"alignTarget ({target.X()},{target.Y()})", field)
+            SmartDashboard.putData("alignTarget "+str(id), field)
 
 	# thank you Steel Ridge/team 6343
     def insert_limelight_measurements(self, LLHostname: str) -> None:
@@ -50,13 +53,13 @@ class Limelight(commands2.Subsystem):
 
     def pathfind(self) -> commands2.Command:
         return AutoBuilder.pathfindToPose(
-            self.drivetrain.get_state().pose.nearest(constants.Limelight.kAlignmentTargets),
+            self.drivetrain.get_state().pose.nearest(list(constants.Limelight.kAlignmentTargets.values())),
             PathConstraints( 2.5, 2.5, 1, 1 )
 		)
 
     def getDelta(self) -> int:
         current = self.drivetrain.get_state().pose
-        self.delta = current.log(current.nearest(constants.Limelight.kAlignmentTargets))
+        self.delta = current.log(current.nearest(list(constants.Limelight.kAlignmentTargets.values())))
 
     def align(self) -> commands2.Command:
         return commands2.RepeatCommand(

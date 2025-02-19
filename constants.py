@@ -3,7 +3,8 @@ import math
 from phoenix6 import CANBus, configs, signals, swerve, units
 from wpimath.units import inchesToMeters, rotationsToRadians, degreesToRadians
 import commands2.cmd as cmd
-from wpimath.geometry import Pose2d
+from wpimath.geometry import Pose2d, Transform2d
+from robotpy_apriltag import AprilTagFieldLayout, AprilTagField
 
 from pint import UnitRegistry
 unit = UnitRegistry()
@@ -47,8 +48,8 @@ class Drive:
 class Limelight:
     kGyroId = 20
     kLimelightHostnames = [ "limelight-wwdkd", "limelight-jonkler", "limelight-moist" ]
-    # TODO: create targets procedurally using tag lists
-    kAlignmentTargets = [ Pose2d(12.3, 5.25, degreesToRadians(-60)) ]
+
+    kAlignmentTargets = { id: AprilTagFieldLayout().loadField(AprilTagField.k2025ReefscapeWelded).getTagPose(id).toPose2d().transformBy(Transform2d(.5,0,math.pi)) for id in list(range(6,12))+list(range(17,23)) }
 
     class precise:
         move_p = 2
