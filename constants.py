@@ -49,7 +49,7 @@ class Limelight:
     kGyroId = 20
     kLimelightHostnames = [ "limelight-wwdkd", "limelight-jonkler", "limelight-moist" ]
 
-    kAlignmentTargets = { id: AprilTagFieldLayout().loadField(AprilTagField.k2025ReefscapeWelded).getTagPose(id).toPose2d().transformBy(Transform2d(.5,0,math.pi)) for id in list(range(6,12))+list(range(17,23)) }
+    kAlignmentTargets = { id: AprilTagFieldLayout().loadField(AprilTagField.kDefaultField).getTagPose(id).toPose2d().transformBy(Transform2d(.5,0,math.pi)) for id in list(range(6,12))+list(range(17,23)) }
 
     class precise:
         move_p = 2
