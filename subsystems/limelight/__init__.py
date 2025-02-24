@@ -18,7 +18,7 @@ class Limelight(commands2.Subsystem):
         super().__init__()
         self.drivetrain = drive
         self.pigeon2 = Pigeon2(constants.Limelight.kGyroId)
-        self.pigeon2.set_yaw((DriverStation.getAlliance() == DriverStation.Alliance.kBlue) * 180)
+        self.pigeon2.set_yaw((DriverStation.getAlliance() == DriverStation.Alliance.kRed) * 180)
         self.getDelta()
 
         for id,target in constants.Limelight.kAlignmentTargets.items():
@@ -48,7 +48,7 @@ class Limelight(commands2.Subsystem):
         # if we are spinning slower than 720 deg/sec and we see tags
         if abs(self.pigeon2.get_angular_velocity_z_world().value) <= 720 and mega_tag2.tag_count > 0:
             # set and add vision measurement
-            self.drivetrain.set_vision_measurement_std_devs((0.7, 0.7, 9999999))
+            self.drivetrain.set_vision_measurement_std_devs((0.7, 0.7, 0.1)) #(0.7, 0.7, 9999999)
             self.drivetrain.add_vision_measurement(mega_tag2.pose, utils.fpga_to_current_time(mega_tag2.timestamp_seconds))
 
     def pathfind(self) -> commands2.Command:
