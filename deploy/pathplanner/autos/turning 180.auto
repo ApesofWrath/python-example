@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "turn 90 CCW"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "turn 90 CW"
+            "pathName": "turn 180.0"
           }
         }
       ]
