@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "turn 90 CCW"
+            "pathName": "accuracy testing"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 1.5
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "turn 90 CW"
+            "pathName": "accuracy testing (1)"
           }
         }
       ]
